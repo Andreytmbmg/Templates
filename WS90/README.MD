@@ -96,7 +96,7 @@ linkquality
 ## Проверено
 
 - SprutHub
-- Zigbee2MQTT
+- Zigbee2MQTT 2.10.1
 - Shelly WS90 Firmware 251015/v1.1.6@62
 
 ---
