@@ -111,4 +111,4 @@ linkquality
 
 ## Лицензия
 
-MIT License
+MIT — используй, изменяй, делись.
