@@ -1,4 +1,4 @@
-# Shelly WS90 (EcoWitt) Template for SprutHub via Zigbee2MQTT
+# Shelly WS90 (EcoWitt) шаблон для SprutHub через Zigbee2MQTT
 
 Шаблон устройства **Shelly WS90 (EcoWitt Weather Station)** для **SprutHub** при подключении через **Zigbee2MQTT (MQTT)**.
 
