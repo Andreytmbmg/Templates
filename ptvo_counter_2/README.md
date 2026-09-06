@@ -1,4 +1,4 @@
-# ptvo_counter_2ch (Custom devices DiY) шаблон для SprutHub через Zigbee2MQTT
+# Счётчик импульсов ptvo_counter_2ch (Custom devices DiY) шаблон для SprutHub через Zigbee2MQTT
 
 Шаблон устройства **ptvo_counter_2ch** для **SprutHub** при подключении через **Zigbee2MQTT (MQTT)**.
 
