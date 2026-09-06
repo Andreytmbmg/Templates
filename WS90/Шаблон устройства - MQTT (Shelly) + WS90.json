@@ -204,7 +204,7 @@
       "characteristics": [
         {
           "name": "Количество осадков",
-          "unit": "mm",
+          "unit": "мм",
           "visible": false,
           "type": "C_CubicMeter",
           "link": [
@@ -222,7 +222,7 @@
       "characteristics": [
         {
           "name": "Количество осадков",
-          "unit": "mm",
+          "unit": "мм/ч",
           "visible": false,
           "type": "C_CubicMeter",
           "link": [
