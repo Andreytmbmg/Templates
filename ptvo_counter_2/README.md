@@ -24,7 +24,7 @@
 - SprutHub
 - Zigbee2MQTT
 - MQTT Broker
-- ptvo_counter_2ch
+- ptvo_counter_2ch (https://www.zigbee2mqtt.io/devices/ptvo_counter_2ch.html)
 - В Zigbee2MQTT должен быть включён режим публикации атрибутов по отдельным подтопикам (`advanced.output: "attribute"` или `"attribute_and_json"`) — без этого чтение параметров (`l3`, `l5`, `state_l6`, `battery`, `voltage`, `linkquality`) работать не будет.
 
 ---
