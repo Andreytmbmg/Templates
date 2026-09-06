@@ -1,0 +1,130 @@
+{
+  "name": "Счётчик импульсов ptvo_counter_2ch",
+  "manufacturer": "Custom devices (DiY)",
+  "model": "ptvo_counter_2ch",
+  "modelIds": [
+    "zigbee2mqtt/(ptvo_counter_2ch)"
+  ],
+  "services": [
+    {
+      "type": "C_GasMeter",
+      "name": "Счётчик 1",
+      "characteristics": [
+        {
+          "type": "C_CubicMeter",
+          "link": [
+            {
+              "type": "Double",
+              "topicGet": "zigbee2mqtt/(1)/l3",
+              "topicSet": "zigbee2mqtt/(1)/set",
+              "outFunc": "JSON.stringify({l3: value})"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "C_GasMeter",
+      "name": "Счётчик 2",
+      "characteristics": [
+        {
+          "type": "C_CubicMeter",
+          "link": [
+            {
+              "type": "Double",
+              "topicGet": "zigbee2mqtt/(1)/l5",
+              "topicSet": "zigbee2mqtt/(1)/set",
+              "outFunc": "JSON.stringify({l5: value})"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "Switch",
+      "name": "Реле L6",
+      "characteristics": [
+        {
+          "type": "On",
+          "link": [
+            {
+              "type": "String",
+              "topicGet": "zigbee2mqtt/(1)/state_l6",
+              "topicSet": "zigbee2mqtt/(1)/state_l6",
+              "map": {
+                "ON": "true",
+                "OFF": "false"
+              },
+              "outFunc": "JSON.stringify({state_l6: value ? 'ON' : 'OFF'})"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BatteryService",
+      "name": "Батарея",
+      "characteristics": [
+        {
+          "type": "BatteryLevel",
+          "link": [
+            {
+              "type": "Integer",
+              "topicGet": "zigbee2mqtt/(1)/battery"
+            }
+          ]
+        },
+        {
+          "type": "StatusLowBattery",
+          "link": [
+            {
+              "type": "Integer",
+              "topicGet": "zigbee2mqtt/(1)/battery",
+              "inFunc": "value < 20 ? 1 : 0"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "C_VoltPeakMeter",
+      "name": "Напряжение батареи",
+      "characteristics": [
+        {
+          "type": "C_Volt",
+          "link": [
+            {
+              "type": "Double",
+              "topicGet": "zigbee2mqtt/(1)/voltage",
+              "inFunc": "Math.round(value / 1000)"
+            }
+          ],
+          "minValue": 0.001,
+          "maxValue": 999.001,
+          "minStep": 0.001
+        }
+      ]
+    },
+    {
+      "name": "Качество связи",
+      "visible": false,
+      "type": "C_Option",
+      "characteristics": [
+        {
+          "name": "Качество связи",
+          "unit": "lqi",
+          "visible": false,
+          "write": false,
+          "type": "C_Integer",
+          "link": [
+            {
+              "type": "Integer",
+              "topicGet": "zigbee2mqtt/(1)/linkquality"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "options": []
+}
