@@ -1,0 +1,358 @@
+{
+  "name": "Метеостанция WS90",
+  "manufacturer": "Shelly",
+  "model": "WS90",
+  "modelIds": [
+    "zigbee2mqtt/(WS90)"
+  ],
+  "services": [
+    {
+      "type": "TemperatureSensor",
+      "name": "Температура",
+      "characteristics": [
+        {
+          "type": "CurrentTemperature",
+          "link": [
+            {
+              "type": "Double",
+              "topicGet": "zigbee2mqtt/(1)/temperature"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "HumiditySensor",
+      "name": "Влажность",
+      "characteristics": [
+        {
+          "type": "CurrentRelativeHumidity",
+          "link": [
+            {
+              "type": "Double",
+              "topicGet": "zigbee2mqtt/(1)/humidity"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "C_AtmosphericPressureSensor",
+      "name": "Давление",
+      "characteristics": [
+        {
+          "type": "C_CurrentAtmosphericPressure",
+          "link": [
+            {
+              "type": "Double",
+              "topicGet": "zigbee2mqtt/(1)/pressure",
+              "inFunc": "Math.round(value * 7.50062)"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "LightSensor",
+      "name": "Освещённость",
+      "characteristics": [
+        {
+          "type": "CurrentAmbientLightLevel",
+          "link": [
+            {
+              "type": "Double",
+              "topicGet": "zigbee2mqtt/(1)/illuminance",
+              "inFunc": "Math.max(0.0001, value)"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "C_UltravioletSensor",
+      "name": "УФ индекс",
+      "characteristics": [
+        {
+          "type": "C_CurrentUltraviolet",
+          "link": [
+            {
+              "type": "Double",
+              "topicGet": "zigbee2mqtt/(1)/uv_index"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "TemperatureSensor",
+      "name": "Точка росы",
+      "characteristics": [
+        {
+          "type": "CurrentTemperature",
+          "link": [
+            {
+              "type": "Double",
+              "topicGet": "zigbee2mqtt/(1)/dew_point"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "TemperatureSensor",
+      "name": "Ощущаемая температура",
+      "characteristics": [
+        {
+          "type": "CurrentTemperature",
+          "link": [
+            {
+              "type": "Double",
+              "topicGet": "zigbee2mqtt/(1)/apparent_temperature"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "TemperatureSensor",
+      "name": "Ветроохлаждение",
+      "characteristics": [
+        {
+          "type": "CurrentTemperature",
+          "link": [
+            {
+              "type": "Double",
+              "topicGet": "zigbee2mqtt/(1)/wind_chill"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "C_PowerFactorMeter",
+      "name": "Тепловой стресс",
+      "characteristics": [
+        {
+          "type": "C_PowerFactor",
+          "unit": "%",
+          "visible": false,
+          "link": [
+            {
+              "type": "Double",
+              "topicGet": "zigbee2mqtt/(1)/heat_stress"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "C_AngleMeter",
+      "name": "Скорость ветра",
+      "characteristics": [
+        {
+          "name": "Скорость ветра",
+          "type": "C_Angle",
+          "unit": "@unit_m_s",
+          "visible": false,
+          "link": [
+            {
+              "type": "Double",
+              "topicGet": "zigbee2mqtt/(1)/wind_speed",
+              "inFunc": "Math.round(value)"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "C_AngleMeter",
+      "name": "Порывы ветра",
+      "characteristics": [
+        {
+          "name": "Порывы ветра",
+          "type": "C_Angle",
+          "unit": "@unit_m_s",
+          "visible": false,
+          "link": [
+            {
+              "type": "Double",
+              "topicGet": "zigbee2mqtt/(1)/gust_speed",
+              "inFunc": "Math.round(value)"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "C_AngleMeter",
+      "name": "Направление ветра",
+      "characteristics": [
+        {
+          "type": "C_Angle",
+          "link": [
+            {
+              "type": "Integer",
+              "topicGet": "zigbee2mqtt/(1)/wind_direction"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "C_WaterMeter",
+      "name": "Осадки",
+      "characteristics": [
+        {
+          "name": "Количество осадков",
+          "unit": "mm",
+          "visible": false,
+          "type": "C_CubicMeter",
+          "link": [
+            {
+              "type": "Double",
+              "topicGet": "zigbee2mqtt/(1)/precipitation"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "C_WaterMeter",
+      "name": "Интенсивность дождя",
+      "characteristics": [
+        {
+          "name": "Количество осадков",
+          "unit": "mm",
+          "visible": false,
+          "type": "C_CubicMeter",
+          "link": [
+            {
+              "type": "Double",
+              "topicGet": "zigbee2mqtt/(1)/rain_rate"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "LeakSensor",
+      "name": "Датчик дождя",
+      "characteristics": [
+        {
+          "type": "LeakDetected",
+          "link": [
+            {
+              "type": "String",
+              "topicGet": "zigbee2mqtt/(1)/rain_status",
+              "map": {
+                "LEAK_DETECTED": "true",
+                "LEAK_NOT_DETECTED": "false"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Качество связи",
+      "visible": false,
+      "type": "C_Option",
+      "characteristics": [
+        {
+          "name": "Качество связи",
+          "unit": "lqi",
+          "visible": false,
+          "type": "C_Integer",
+          "write": false,
+          "link": [
+            {
+              "type": "Integer",
+              "topicGet": "zigbee2mqtt/(1)/linkquality"
+            }
+          ],
+          "minValue": 0,
+          "maxValue": 999,
+          "minStep": 1
+        }
+      ]
+    },
+    {
+      "type": "C_Option",
+      "name": "Погода",
+      "characteristics": [
+        {
+          "name": "Погода",
+          "description": "Погода погода погода",
+          "unit": "",
+          "visible": false,
+          "write": false,
+          "type": "C_String",
+          "link": [
+            {
+              "type": "String",
+              "topicGet": "zigbee2mqtt/(1)/weather_condition",
+              "inFunc": "(function(v){var m={'sunny':'Солнечно','partlycloudy':'Переменная облачность','cloudy':'Облачно','rainy':'Дождь','thunderstorm':'Гроза','snowy':'Снег','foggy':'Туман','windy':'Ветрено','clear-night':'Ясная ночь'};return m[v]||v;})(value)"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "TemperatureSensor",
+      "name": "Humidex",
+      "characteristics": [
+        {
+          "type": "CurrentTemperature",
+          "link": [
+            {
+              "type": "Double",
+              "topicGet": "zigbee2mqtt/(1)/humidex"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "C_AtmosphericPressureSensor",
+      "name": "Тренд давления",
+      "characteristics": [
+        {
+          "type": "C_CurrentAtmosphericPressure",
+          "link": [
+            {
+              "type": "Integer",
+              "topicGet": "zigbee2mqtt/(1)/pressure_trend",
+              "inFunc": "Math.round(value * 7.50062)"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BatteryService",
+      "name": "Батарея",
+      "characteristics": [
+        {
+          "type": "BatteryLevel",
+          "link": [
+            {
+              "type": "Integer",
+              "topicGet": "zigbee2mqtt/(1)/battery"
+            }
+          ]
+        },
+        {
+          "type": "StatusLowBattery",
+          "link": [
+            {
+              "type": "Integer",
+              "topicGet": "zigbee2mqtt/(1)/battery",
+              "inFunc": "value < 20 ? 1 : 0"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "options": []
+}
