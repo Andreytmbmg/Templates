@@ -1,0 +1,16 @@
+{
+  "scenarioTemplate": {
+    "order": 203,
+    "type": "GLOBAL",
+    "predefined": false,
+    "active": true,
+    "onStart": true,
+    "sync": false,
+    "error": false,
+    "index": "203",
+    "name": "УФ Средний",
+    "desc": "",
+    "data": "if (!global.uvSum) global.uvSum = 0;\nif (!global.uvCount) global.uvCount = 0;\nif (!global.uvAverage) global.uvAverage = 0;\n\nglobal.uv_tick = function() {\n    try {\n        var currentUV = Hub.getAccessory(537).getService(25).getCharacteristic(27).value;\n\n        if (currentUV === null || isNaN(currentUV)) {\n            log.warn(\"⚠️ УФ индекс недоступен, пропускаем.\");\n            return;\n        }\n\n        global.uvSum += currentUV;\n        global.uvCount += 1;\n\n    } catch (e) {\n        log.error(\"⛔ Ошибка uv_tick: \" + e.message);\n    }\n};\n\nglobal.uv_calc = function() {\n    try {\n        if (global.uvCount === 0) {\n            log.warn(\"⚠️ Нет данных УФ за период.\");\n            return;\n        }\n\n        global.uvAverage = Math.round(global.uvSum / global.uvCount);\n\n        log.info(\"✅ УФ среднее за период: \" + global.uvAverage + \" (из \" + global.uvCount + \" значений)\");\n\n        Hub.getAccessory(537).getService(78).getCharacteristic(80).setValue(global.uvAverage);\n\n        global.uvSum = 0;\n        global.uvCount = 0;\n\n    } catch (e) {\n        log.error(\"⛔ Ошибка uv_calc: \" + e.message);\n    }\n};",
+    "optionsWindow": "203"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "scenarioTemplate": {
+    "order": 311,
+    "type": "GLOBAL",
+    "predefined": false,
+    "active": true,
+    "onStart": true,
+    "sync": false,
+    "error": false,
+    "index": "311",
+    "name": "Средняя скорость ветра",
+    "desc": "",
+    "data": "if (!global.windSum) global.windSum = 0;\nif (!global.windCount) global.windCount = 0;\nif (!global.windAverage) global.windAverage = 0;\n\nglobal.wind_tick = function() {\n    try {\n        var currentWind = Hub.getAccessory(537).getService(40).getCharacteristic(42).value;\n\n        if (currentWind === null || isNaN(currentWind)) {\n            log.warn(\"⚠️ Скорость ветра недоступна, пропускаем.\");\n            return;\n        }\n\n        global.windSum += currentWind;\n        global.windCount += 1;\n\n    } catch (e) {\n        log.error(\"⛔ Ошибка wind_tick: \" + e.message);\n    }\n};\n\nglobal.wind_calc = function() {\n    try {\n        if (global.windCount === 0) {\n            log.warn(\"⚠️ Нет данных по скорости ветра за период.\");\n            return;\n        }\n\n        global.windAverage = Math.round(global.windSum / global.windCount);\n\n        log.info(\"✅ Средняя скорость ветра за период: \" + global.windAverage + \" (из \" + global.windCount + \" значений)\");\n\n        Hub.getAccessory(537).getService(75).getCharacteristic(77).setValue(global.windAverage);\n\n        global.windSum = 0;\n        global.windCount = 0;\n\n    } catch (e) {\n        log.error(\"⛔ Ошибка wind_calc: \" + e.message);\n    }\n};",
+    "optionsWindow": "311"
+  }
+}
