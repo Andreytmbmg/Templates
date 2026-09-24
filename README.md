@@ -24,6 +24,8 @@
 | 💨 **VAKIO Base Smart + учёт фильтра** — рекуператор со счётчиками воздуха и ресурсом фильтра F7 | MQTT | [VAKIO_Base_Smart_with_Filter_v6.json](https://github.com/Andreytmbmg/logic/blob/main/Recuperator/filter_f7/VAKIO_Base_Smart_with_Filter_v6.json) | [Фильтр рекуператора](https://github.com/Andreytmbmg/logic/tree/main/Recuperator/filter_f7) |
 | ❄️ **Lytko 102** — кондиционер | MQTT | [Шаблон_устройства_-_MQTT_(Lytko)_102_v7.json](https://github.com/Andreytmbmg/logic/blob/main/Conditioner/%D0%A8%D0%B0%D0%B1%D0%BB%D0%BE%D0%BD_%D1%83%D1%81%D1%82%D1%80%D0%BE%D0%B8%CC%86%D1%81%D1%82%D0%B2%D0%B0_-_MQTT_%28Lytko%29_102_v7.json) | [Кондиционер](https://github.com/Andreytmbmg/logic/tree/main/Conditioner) |
 
+> 📘 **Как подключить VAKIO Base Smart к MQTT-брокеру.** Шаблоны VAKIO работают через MQTT, поэтому рекуператор сначала нужно привязать к вашему брокеру. Инструкция есть в официальном репозитории производителя: [vakio-ru/vakio_base_smart](https://github.com/vakio-ru/vakio_base_smart#connect) (раздел «Подключение прибора к брокеру»). Сам репозиторий — интеграция для Home Assistant, но шаг подключения к брокеру общий и для Спрут.Хаб.
+
 ---
 
 ## Кратко о шаблонах
@@ -58,6 +60,12 @@
 
 ---
 
+## Полезные ссылки
+
+- [vakio-ru/vakio_base_smart](https://github.com/vakio-ru/vakio_base_smart) — официальный репозиторий VAKIO Base Smart: подключение к MQTT-брокеру, интеграция для Home Assistant.
+- [Zigbee2MQTT](https://www.zigbee2mqtt.io) — документация по Zigbee2MQTT (для WS90 и ptvo_counter_2ch).
+
+---
 Нашли ошибку или хотите предложить шаблон — создавайте [Issue](../../issues). Если шаблон пригодился, поставьте ⭐.
 
 **Ключевые слова:** Спрут.Хаб, Спрут Хаб, SprutHub, СХ, шаблон устройства, MQTT, Zigbee2MQTT, VAKIO, Вакио, Base Smart, рекуператор, Lytko, кондиционер, Shelly WS90, Ecowitt WS90, метеостанция, ptvo_counter_2ch, счётчик импульсов, Tuya, CO2BJ, co2bj, монитор качества воздуха, датчик CO2, PM2.5, формальдегид, homebridge-tuya, умный дом, HomeKit, smart home, home automation, device template.
