@@ -11,7 +11,7 @@
 | Устройство | Подключение | Шаблон | Документация |
 |---|---|---|---|
 | 🌦 **Shelly / Ecowitt WS90** — метеостанция | Zigbee2MQTT | [Шаблон устройства - mqtt (Shelly) + Ecowitt WS90.json](WS90/%D0%A8%D0%B0%D0%B1%D0%BB%D0%BE%D0%BD%20%D1%83%D1%81%D1%82%D1%80%D0%BE%D0%B8%CC%86%D1%81%D1%82%D0%B2%D0%B0%20-%20mqtt%20%28Shelly%29%20%2B%20Ecowitt%20WS90.json) | [README](WS90/README.MD) |
-| 🌫 **Tuya CO2BJ** — монитор качества воздуха | HOMEBRIDGE MQTT (через патч `homebridge-tuya`) | [Шаблон устройства - mqtt (Tuya) + CO2BJ.json](CO2BJ/%D0%A8%D0%B0%D0%B1%D0%BB%D0%BE%D0%BD%20%D1%83%D1%81%D1%82%D1%80%D0%BE%D0%B8%CC%86%D1%81%D1%82%D0%B2%D0%B0%20-%20mqtt%20%28Tuya%29%20%2B%20CO2BJ.json) | [README](CO2BJ/README.md) |
+| 🌫 **Tuya CO2BJ** — монитор качества воздуха | HomeBridge MQTT (через патч `homebridge-tuya`) | [Шаблон устройства - mqtt (Tuya) + CO2BJ.json](CO2BJ/%D0%A8%D0%B0%D0%B1%D0%BB%D0%BE%D0%BD%20%D1%83%D1%81%D1%82%D1%80%D0%BE%D0%B8%CC%86%D1%81%D1%82%D0%B2%D0%B0%20-%20mqtt%20%28Tuya%29%20%2B%20CO2BJ.json) | [README](CO2BJ/README.md) |
 | 🔢 **ptvo_counter_2ch** — двухканальный счётчик импульсов (Custom devices DiY) | Zigbee2MQTT | [ptvo_counter_2ch.json](ptvo_counter_2/ptvo_counter_2ch.json) | [README](ptvo_counter_2/README.md) |
 
 ## 🔗 Шаблоны в репозитории [logic](https://github.com/Andreytmbmg/logic)
