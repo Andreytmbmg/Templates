@@ -1,0 +1,184 @@
+{
+  "name": "Монитор качества воздуха",
+  "manufacturer": "Tuya",
+  "model": "CO2BJ",
+  "modelIds": [
+    "tuya/bf60d78ee3be2683edds5d/status"
+  ],
+  "services": [
+    {
+      "name": "Температура",
+      "type": "TemperatureSensor",
+      "characteristics": [
+        {
+          "type": "CurrentTemperature",
+          "link": [
+            {
+              "type": "Double",
+              "topicGet": "tuya/bf60d78ee3be2683edds5d/status",
+              "inFunc": "(JSON.parse(value).filter(function(s){return s.code=='temp_current'})[0]||{}).value||0"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Влажность",
+      "type": "HumiditySensor",
+      "characteristics": [
+        {
+          "type": "CurrentRelativeHumidity",
+          "link": [
+            {
+              "type": "Integer",
+              "topicGet": "tuya/bf60d78ee3be2683edds5d/status",
+              "inFunc": "(JSON.parse(value).filter(function(s){return s.code=='humidity_value'})[0]||{}).value||0"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "PM1",
+      "type": "AirQualitySensor",
+      "characteristics": [
+        {
+          "type": "C_PM1_0Density",
+          "link": [
+            {
+              "type": "Double",
+              "topicGet": "tuya/bf60d78ee3be2683edds5d/status",
+              "inFunc": "(JSON.parse(value).filter(function(s){return s['102']!==undefined;})[0]||{})['102']||0"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "PM2.5",
+      "type": "AirQualitySensor",
+      "logics": [
+        {
+          "type": "AirQualityFromPM2_5Density"
+        }
+      ],
+      "characteristics": [
+        {
+          "type": "PM2_5Density",
+          "link": [
+            {
+              "type": "Integer",
+              "topicGet": "tuya/bf60d78ee3be2683edds5d/status",
+              "inFunc": "(JSON.parse(value).filter(function(s){return s.code=='pm25_value'})[0]||{}).value||0"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "PM10",
+      "type": "AirQualitySensor",
+      "logics": [
+        {
+          "type": "AirQualityFromPM10Density"
+        }
+      ],
+      "characteristics": [
+        {
+          "type": "PM10Density",
+          "link": [
+            {
+              "type": "Integer",
+              "topicGet": "tuya/bf60d78ee3be2683edds5d/status",
+              "inFunc": "(JSON.parse(value).filter(function(s){return s['101']!==undefined;})[0]||{})['101']||0"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "TVOC",
+      "type": "AirQualitySensor",
+      "logics": [
+        {
+          "type": "AirQualityFromVOCDensity"
+        }
+      ],
+      "characteristics": [
+        {
+          "type": "VOCDensity",
+          "link": [
+            {
+              "type": "Integer",
+              "topicGet": "tuya/bf60d78ee3be2683edds5d/status",
+              "inFunc": "(JSON.parse(value).filter(function(s){return s.code=='voc_value'})[0]||{}).value||0"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Датчик углекислого газа CO2",
+      "type": "CarbonDioxideSensor",
+      "logics": [
+        {
+          "type": "CarbonDioxideDetectedFromCarbonDioxideLevel"
+        }
+      ],
+      "characteristics": [
+        {
+          "type": "CarbonDioxideLevel",
+          "link": [
+            {
+              "type": "Integer",
+              "topicGet": "tuya/bf60d78ee3be2683edds5d/status",
+              "inFunc": "(JSON.parse(value).filter(function(s){return s.code=='co2_value'})[0]||{}).value||0"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Формальдегид HCHO",
+      "type": "AirQualitySensor",
+      "characteristics": [
+        {
+          "type": "C_FormaldehydeDensity",
+          "link": [
+            {
+              "type": "Double",
+              "topicGet": "tuya/bf60d78ee3be2683edds5d/status",
+              "inFunc": "((JSON.parse(value).filter(function(s){return s.code=='ch2o_value'})[0]||{}).value||0)/1000"
+            }
+          ]
+        }
+      ],
+      "logics": [
+        {
+          "type": "AirQualityFromFormaldehydeDensity"
+        }
+      ]
+    },
+    {
+      "name": "Индекс качества воздуха AQI",
+      "type": "AirQualitySensor",
+      "characteristics": [
+        {
+          "type": "C_AQIDensity",
+          "link": [
+            {
+              "type": "Double",
+              "topicGet": "tuya/bf60d78ee3be2683edds5d/status",
+              "inFunc": "(JSON.parse(value).filter(function(s){return s['113']!==undefined;})[0]||{})['113']||0"
+            }
+          ]
+        }
+      ],
+      "logics": [
+        {
+          "type": "AirQualityFromAQIDensity"
+        }
+      ]
+    }
+  ]
+}
