@@ -1,0 +1,285 @@
+{
+  "name": "Робот-пылесос Roborock",
+  "manufacturer": "Roborock",
+  "model": "Saros 10R (roborock_svc)",
+  "modelIds": [
+    "roborock/(saros10r)"
+  ],
+  "options": [],
+  "services": [
+    {
+      "type": "C_VacuumCleaner",
+      "name": "Пылесос",
+      "characteristics": [
+        {
+          "type": "Active",
+          "link": [
+            {
+              "type": "Integer",
+              "topicGet": "roborock/(1)/sh/active"
+            }
+          ]
+        },
+        {
+          "type": "C_CurrentOperationalState",
+          "link": [
+            {
+              "type": "Integer",
+              "topicGet": "roborock/(1)/sh/op_state"
+            }
+          ]
+        },
+        {
+          "type": "C_TargetOperationalState",
+          "link": [
+            {
+              "type": "Integer",
+              "topicGet": "roborock/(1)/sh/op_state",
+              "topicSet": "roborock/(1)/set/target_state",
+              "inFunc": "value == 1 ? 1 : (value == 2 ? 2 : ((value >= 64 && value <= 69) ? 3 : 0))"
+            }
+          ]
+        },
+        {
+          "type": "C_CurrentRunMode",
+          "link": [
+            {
+              "type": "Integer",
+              "topicGet": "roborock/(1)/sh/run_mode"
+            }
+          ]
+        },
+        {
+          "type": "C_OperationalError",
+          "link": [
+            {
+              "type": "Integer",
+              "topicGet": "roborock/(1)/sh/error"
+            }
+          ]
+        },
+        {
+          "type": "C_CleanMode",
+          "link": [
+            {
+              "type": "Integer",
+              "topicGet": "roborock/(1)/sh/clean_mode",
+              "topicSet": "roborock/(1)/set/clean_mode"
+            }
+          ]
+        },
+        {
+          "type": "C_SuctionPower",
+          "link": [
+            {
+              "type": "Integer",
+              "topicGet": "roborock/(1)/sh/suction",
+              "topicSet": "roborock/(1)/set/suction"
+            }
+          ]
+        },
+        {
+          "type": "C_WaterFlow",
+          "link": [
+            {
+              "type": "Integer",
+              "topicGet": "roborock/(1)/sh/water",
+              "topicSet": "roborock/(1)/set/water"
+            }
+          ]
+        },
+        {
+          "type": "C_SupportedAreas",
+          "link": [
+            {
+              "type": "String",
+              "topicGet": "roborock/(1)/sh/supported_areas"
+            }
+          ]
+        },
+        {
+          "type": "C_SelectedAreas",
+          "link": [
+            {
+              "type": "String",
+              "topicGet": "roborock/(1)/sh/selected_areas",
+              "topicSet": "roborock/(1)/set/selected_areas"
+            }
+          ]
+        },
+        {
+          "type": "C_CurrentArea",
+          "link": [
+            {
+              "type": "Integer",
+              "topicGet": "roborock/(1)/sh/current_area"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BatteryService",
+      "name": "Батарея",
+      "characteristics": [
+        {
+          "type": "BatteryLevel",
+          "link": [
+            {
+              "type": "Integer",
+              "topicGet": "roborock/(1)/battery"
+            }
+          ]
+        },
+        {
+          "type": "StatusLowBattery",
+          "link": [
+            {
+              "type": "Integer",
+              "topicGet": "roborock/(1)/battery",
+              "inFunc": "value < 20 ? 1 : 0"
+            }
+          ]
+        },
+        {
+          "type": "ChargingState",
+          "link": [
+            {
+              "type": "Integer",
+              "topicGet": "roborock/(1)/state",
+              "inFunc": "(value == 8 || value == 100) ? 1 : 0"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "C_Option",
+      "name": "Статус",
+      "characteristics": [
+        {
+          "type": "C_String",
+          "link": [
+            {
+              "type": "String",
+              "topicGet": "roborock/(1)/status"
+            }
+          ],
+          "name": "Статус",
+          "write": false
+        }
+      ]
+    },
+    {
+      "type": "C_Option",
+      "name": "Комната",
+      "characteristics": [
+        {
+          "type": "C_String",
+          "link": [
+            {
+              "type": "String",
+              "topicGet": "roborock/(1)/room"
+            }
+          ],
+          "name": "Комната",
+          "write": false
+        }
+      ]
+    },
+    {
+      "type": "C_Option",
+      "name": "Убрано, м²",
+      "characteristics": [
+        {
+          "type": "C_Double",
+          "link": [
+            {
+              "type": "Double",
+              "topicGet": "roborock/(1)/clean_area"
+            }
+          ],
+          "name": "Убрано, м²",
+          "write": false,
+          "minValue": 0,
+          "maxValue": 1000,
+          "minStep": 0.1
+        }
+      ]
+    },
+    {
+      "type": "C_Option",
+      "name": "Время уборки, мин",
+      "characteristics": [
+        {
+          "type": "C_Integer",
+          "link": [
+            {
+              "type": "Integer",
+              "topicGet": "roborock/(1)/clean_time"
+            }
+          ],
+          "name": "Время уборки, мин",
+          "write": false,
+          "minValue": 0,
+          "maxValue": 1000,
+          "minStep": 1
+        }
+      ]
+    },
+    {
+      "type": "C_Option",
+      "name": "Код ошибки робота",
+      "characteristics": [
+        {
+          "type": "C_Integer",
+          "link": [
+            {
+              "type": "Integer",
+              "topicGet": "roborock/(1)/error"
+            }
+          ],
+          "name": "Код ошибки робота",
+          "write": false,
+          "minValue": 0,
+          "maxValue": 999,
+          "minStep": 1
+        }
+      ]
+    },
+    {
+      "type": "C_Option",
+      "name": "Код ошибки станции",
+      "characteristics": [
+        {
+          "type": "C_Integer",
+          "link": [
+            {
+              "type": "Integer",
+              "topicGet": "roborock/(1)/dock_error"
+            }
+          ],
+          "name": "Код ошибки станции",
+          "write": false,
+          "minValue": 0,
+          "maxValue": 999,
+          "minStep": 1
+        }
+      ]
+    },
+    {
+      "type": "AccessoryInformation",
+      "characteristics": [
+        {
+          "type": "C_Online",
+          "link": [
+            {
+              "type": "String",
+              "topicGet": "roborock/(1)/sh/online"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

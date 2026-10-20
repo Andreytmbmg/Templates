@@ -1,0 +1,30 @@
+[Unit]
+Description=Roborock -> 3D dashboard / Sprut.hub MQTT bridge
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=roborock
+Group=roborock
+WorkingDirectory=/opt/roborock
+Environment=HOME=/opt/roborock
+Environment=PYTHONUNBUFFERED=1
+Environment=RR_DUID=ВАШ_DUID
+Environment=RR_MQTT_HOST=192.168.1.10
+Environment=RR_MQTT_PORT=1883
+Environment=RR_HTTP_PORT=8590
+ExecStart=/opt/roborock/venv/bin/python /opt/roborock/roborock_svc.py
+Restart=always
+RestartSec=20
+# бережём Homebridge: низкий приоритет и жёсткие лимиты
+Nice=10
+CPUQuota=25%
+MemoryMax=150M
+NoNewPrivileges=true
+ProtectSystem=strict
+ReadWritePaths=/opt/roborock
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

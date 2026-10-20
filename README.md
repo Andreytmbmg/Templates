@@ -13,6 +13,7 @@
 | 🌦 **Shelly / Ecowitt WS90** — метеостанция | Zigbee2MQTT | [Шаблон устройства - mqtt (Shelly) + Ecowitt WS90.json](WS90/%D0%A8%D0%B0%D0%B1%D0%BB%D0%BE%D0%BD%20%D1%83%D1%81%D1%82%D1%80%D0%BE%D0%B8%CC%86%D1%81%D1%82%D0%B2%D0%B0%20-%20mqtt%20%28Shelly%29%20%2B%20Ecowitt%20WS90.json) | [README](WS90/README.MD) |
 | 🌫 **Tuya CO2BJ** — монитор качества воздуха | HomeBridge MQTT (через патч `homebridge-tuya`) | [Шаблон устройства - mqtt (Tuya) + CO2BJ.json](CO2BJ/%D0%A8%D0%B0%D0%B1%D0%BB%D0%BE%D0%BD%20%D1%83%D1%81%D1%82%D1%80%D0%BE%D0%B8%CC%86%D1%81%D1%82%D0%B2%D0%B0%20-%20mqtt%20%28Tuya%29%20%2B%20CO2BJ.json) | [README](CO2BJ/README.md) |
 | 🔢 **ptvo_counter_2ch** — двухканальный счётчик импульсов (Custom devices DiY) | Zigbee2MQTT | [ptvo_counter_2ch.json](ptvo_counter_2/ptvo_counter_2ch.json) | [README](ptvo_counter_2/README.md) |
+| 🧹 **Roborock Saros 10R** — робот-пылесос (сервис «Пылесос») | MQTT (служба `roborock_svc` на python-roborock) | [Шаблон устройства - mqtt (roborock_svc) + Roborock Saros 10R.json](Roborock/%D0%A8%D0%B0%D0%B1%D0%BB%D0%BE%D0%BD%20%D1%83%D1%81%D1%82%D1%80%D0%BE%D0%B9%D1%81%D1%82%D0%B2%D0%B0%20-%20mqtt%20%28roborock_svc%29%20%2B%20Roborock%20Saros%2010R.json) | [README](Roborock/README.md) |
 
 ## 🔗 Шаблоны в репозитории [logic](https://github.com/Andreytmbmg/logic)
 
@@ -35,6 +36,8 @@
 **Tuya CO2BJ.** CO₂, температура, влажность, PM1.0, PM2.5, PM10, TVOC, формальдегид и AQI. Каждый показатель качества воздуха вынесен в отдельный сервис, чтобы HomeKit давал оценку по каждому. Данные берутся из облачного push-канала Tuya: небольшой патч плагина `homebridge-tuya` пересылает их в локальный MQTT-брокер.
 
 **ptvo_counter_2ch.** Два импульсных счётчика с возможностью записи начальных показаний (например, для воды в м³), реле L6, уровень и напряжение батареи, качество связи.
+
+**Roborock Saros 10R.** Родной сервис «Пылесос»: состояние, команды старт/пауза/стоп/на базу, режим уборки, мощность, вода, ошибки робота и станции, выбор комнат списком и текущая комната, батарея. Данные даёт небольшая служба на python-roborock, которая работает в локальной сети и публикует их в MQTT; пароль от аккаунта Roborock не хранится.
 
 **VAKIO Base Smart.** Включение, скорость вентилятора и выбор режима работы: приток, приток MAX, рекуперация лето/зима, вытяжка, вытяжка MAX, ночной. Режимы реализованы через сервис Television / InputSource, поэтому в Apple Home выбираются из списка.
 
