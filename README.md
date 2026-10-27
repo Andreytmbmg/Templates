@@ -14,6 +14,7 @@
 | 🌫 **Tuya CO2BJ** — монитор качества воздуха | HomeBridge MQTT (через патч `homebridge-tuya`) | [Шаблон устройства - mqtt (Tuya) + CO2BJ.json](CO2BJ/%D0%A8%D0%B0%D0%B1%D0%BB%D0%BE%D0%BD%20%D1%83%D1%81%D1%82%D1%80%D0%BE%D0%B8%CC%86%D1%81%D1%82%D0%B2%D0%B0%20-%20mqtt%20%28Tuya%29%20%2B%20CO2BJ.json) | [README](CO2BJ/README.md) |
 | 🔢 **ptvo_counter_2ch** — двухканальный счётчик импульсов (Custom devices DiY) | Zigbee2MQTT | [ptvo_counter_2ch.json](ptvo_counter_2/ptvo_counter_2ch.json) | [README](ptvo_counter_2/README.md) |
 | 🧹 **Roborock Saros 10R** — робот-пылесос (сервис «Пылесос») | MQTT (служба `roborock_svc` на python-roborock) | [Шаблон устройства - mqtt (roborock_svc) + Roborock Saros 10R.json](Roborock/%D0%A8%D0%B0%D0%B1%D0%BB%D0%BE%D0%BD%20%D1%83%D1%81%D1%82%D1%80%D0%BE%D0%B9%D1%81%D1%82%D0%B2%D0%B0%20-%20mqtt%20%28roborock_svc%29%20%2B%20Roborock%20Saros%2010R.json) | [README](Roborock/README.md) |
+| 🔌 **CUKTECH 10 GaN Charger Ultra (AD1204)** — зарядка 4 порта | MQTT (BLE-мост `cuktech-ble-server-lite`) | [Шаблон устройства - mqtt (cuktech-ble-server) + CUKTECH 10 GaN Ultra.json](CUKTECH/%D0%A8%D0%B0%D0%B1%D0%BB%D0%BE%D0%BD%20%D1%83%D1%81%D1%82%D1%80%D0%BE%D0%B9%D1%81%D1%82%D0%B2%D0%B0%20-%20mqtt%20%28cuktech-ble-server%29%20%2B%20CUKTECH%2010%20GaN%20Ultra.json) | [README](CUKTECH/README.md) |
 
 ## 🔗 Шаблоны в репозитории [logic](https://github.com/Andreytmbmg/logic)
 
@@ -38,6 +39,8 @@
 **ptvo_counter_2ch.** Два импульсных счётчика с возможностью записи начальных показаний (например, для воды в м³), реле L6, уровень и напряжение батареи, качество связи.
 
 **Roborock Saros 10R.** Родной сервис «Пылесос»: состояние, команды старт/пауза/стоп/на базу, режим уборки, мощность, вода, ошибки робота и станции, выбор комнат списком и текущая комната, батарея. Данные даёт небольшая служба на python-roborock, которая работает в локальной сети и публикует их в MQTT; пароль от аккаунта Roborock не хранится.
+
+**CUKTECH 10 GaN Charger Ultra.** Четыре порта (C1, C2, C3, USB-A) как розетки: включение и выключение порта, «используется», мощность, напряжение, ток и протокол зарядки (PD, PPS, QC…). Плюс текущий режим зарядки, «USB-A всегда включён», гашение и блокировка поворота экрана. Данные идут локально по Bluetooth, без облака Xiaomi: мост на Linux-хосте (здесь — ТВ-приставка RK3318) подключается к зарядке и публикует их в MQTT.
 
 **VAKIO Base Smart.** Включение, скорость вентилятора и выбор режима работы: приток, приток MAX, рекуперация лето/зима, вытяжка, вытяжка MAX, ночной. Режимы реализованы через сервис Television / InputSource, поэтому в Apple Home выбираются из списка.
 
@@ -71,4 +74,4 @@
 ---
 Нашли ошибку или хотите предложить шаблон — создавайте [Issue](../../issues). Если шаблон пригодился, поставьте ⭐.
 
-**Ключевые слова:** Спрут.Хаб, Спрут Хаб, SprutHub, СХ, шаблон устройства, MQTT, Zigbee2MQTT, VAKIO, Вакио, Base Smart, рекуператор, Lytko, кондиционер, Shelly WS90, Ecowitt WS90, метеостанция, ptvo_counter_2ch, счётчик импульсов, Tuya, CO2BJ, co2bj, монитор качества воздуха, датчик CO2, PM2.5, формальдегид, homebridge-tuya, умный дом, HomeKit, smart home, home automation, device template.
+**Ключевые слова:** Спрут.Хаб, Спрут Хаб, SprutHub, СХ, шаблон устройства, MQTT, Zigbee2MQTT, VAKIO, Вакио, Base Smart, рекуператор, Lytko, кондиционер, Shelly WS90, Ecowitt WS90, метеостанция, ptvo_counter_2ch, счётчик импульсов, Tuya, CO2BJ, co2bj, монитор качества воздуха, датчик CO2, PM2.5, формальдегид, homebridge-tuya, CUKTECH, Cuktech 10, AD1204, njcuk.fitting.ad1204, зарядное устройство, GaN, BLE, Bluetooth, умный дом, HomeKit, smart home, home automation, device template.

@@ -1,0 +1,18 @@
+[Unit]
+Description=CUKTECH BLE -> MQTT bridge
+After=bluetooth.target network-online.target
+Wants=network-online.target bluetooth.target
+
+[Service]
+User=homebridge
+WorkingDirectory=/opt/cuktech/server
+Environment=CUKTECH_CONFIG_PATH=/etc/cuktech/config.yaml
+# сброс зависшего BLE-подключения (иначе зарядка не рекламирует себя и мост её не находит)
+ExecStartPre=-+/usr/bin/bluetoothctl disconnect 3C:CD:73:34:65:76
+ExecStart=/opt/cuktech/server/.venv/bin/cuktech-server
+ExecStopPost=-+/usr/bin/bluetoothctl disconnect 3C:CD:73:34:65:76
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

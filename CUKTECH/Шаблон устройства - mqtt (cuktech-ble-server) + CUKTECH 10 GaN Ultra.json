@@ -1,0 +1,409 @@
+{
+  "name": "Зарядка CUKTECH 10 GaN Ultra",
+  "manufacturer": "CUKTECH",
+  "model": "AD1204 (cuktech-ble-server-lite)",
+  "modelIds": [
+    "cuktech/(charger)"
+  ],
+  "options": [],
+  "services": [
+    {
+      "type": "Outlet",
+      "name": "Порт C1",
+      "characteristics": [
+        {
+          "type": "On",
+          "link": [
+            {
+              "type": "String",
+              "topicGet": "cuktech/(1)/settings",
+              "topicSet": "cuktech/(1)/port",
+              "inFunc": "((JSON.parse(value)['16'] || 0) >> 0 & 1) == 1 ? 'true' : 'false'",
+              "outFunc": "JSON.stringify({port: 'c1', action: value ? 'on' : 'off'})"
+            }
+          ]
+        },
+        {
+          "type": "OutletInUse",
+          "link": [
+            {
+              "type": "String",
+              "topicGet": "cuktech/(1)/port/c1",
+              "inFunc": "JSON.parse(value).active ? 'true' : 'false'"
+            }
+          ]
+        },
+        {
+          "type": "C_Watt",
+          "name": "Мощность",
+          "link": [
+            {
+              "type": "Double",
+              "topicGet": "cuktech/(1)/port/c1",
+              "inFunc": "JSON.parse(value).power || 0"
+            }
+          ]
+        },
+        {
+          "type": "C_Volt",
+          "name": "Напряжение",
+          "link": [
+            {
+              "type": "Double",
+              "topicGet": "cuktech/(1)/port/c1",
+              "inFunc": "JSON.parse(value).voltage || 0"
+            }
+          ]
+        },
+        {
+          "type": "C_Ampere",
+          "name": "Ток",
+          "link": [
+            {
+              "type": "Double",
+              "topicGet": "cuktech/(1)/port/c1",
+              "inFunc": "JSON.parse(value).current || 0"
+            }
+          ]
+        },
+        {
+          "type": "C_String",
+          "name": "Протокол",
+          "write": false,
+          "link": [
+            {
+              "type": "String",
+              "topicGet": "cuktech/(1)/port/c1",
+              "inFunc": "JSON.parse(value).active ? (JSON.parse(value).protocol || '—') : 'нет нагрузки'"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "Outlet",
+      "name": "Порт C2",
+      "characteristics": [
+        {
+          "type": "On",
+          "link": [
+            {
+              "type": "String",
+              "topicGet": "cuktech/(1)/settings",
+              "topicSet": "cuktech/(1)/port",
+              "inFunc": "((JSON.parse(value)['16'] || 0) >> 1 & 1) == 1 ? 'true' : 'false'",
+              "outFunc": "JSON.stringify({port: 'c2', action: value ? 'on' : 'off'})"
+            }
+          ]
+        },
+        {
+          "type": "OutletInUse",
+          "link": [
+            {
+              "type": "String",
+              "topicGet": "cuktech/(1)/port/c2",
+              "inFunc": "JSON.parse(value).active ? 'true' : 'false'"
+            }
+          ]
+        },
+        {
+          "type": "C_Watt",
+          "name": "Мощность",
+          "link": [
+            {
+              "type": "Double",
+              "topicGet": "cuktech/(1)/port/c2",
+              "inFunc": "JSON.parse(value).power || 0"
+            }
+          ]
+        },
+        {
+          "type": "C_Volt",
+          "name": "Напряжение",
+          "link": [
+            {
+              "type": "Double",
+              "topicGet": "cuktech/(1)/port/c2",
+              "inFunc": "JSON.parse(value).voltage || 0"
+            }
+          ]
+        },
+        {
+          "type": "C_Ampere",
+          "name": "Ток",
+          "link": [
+            {
+              "type": "Double",
+              "topicGet": "cuktech/(1)/port/c2",
+              "inFunc": "JSON.parse(value).current || 0"
+            }
+          ]
+        },
+        {
+          "type": "C_String",
+          "name": "Протокол",
+          "write": false,
+          "link": [
+            {
+              "type": "String",
+              "topicGet": "cuktech/(1)/port/c2",
+              "inFunc": "JSON.parse(value).active ? (JSON.parse(value).protocol || '—') : 'нет нагрузки'"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "Outlet",
+      "name": "Порт C3",
+      "characteristics": [
+        {
+          "type": "On",
+          "link": [
+            {
+              "type": "String",
+              "topicGet": "cuktech/(1)/settings",
+              "topicSet": "cuktech/(1)/port",
+              "inFunc": "((JSON.parse(value)['16'] || 0) >> 2 & 1) == 1 ? 'true' : 'false'",
+              "outFunc": "JSON.stringify({port: 'c3', action: value ? 'on' : 'off'})"
+            }
+          ]
+        },
+        {
+          "type": "OutletInUse",
+          "link": [
+            {
+              "type": "String",
+              "topicGet": "cuktech/(1)/port/c3",
+              "inFunc": "JSON.parse(value).active ? 'true' : 'false'"
+            }
+          ]
+        },
+        {
+          "type": "C_Watt",
+          "name": "Мощность",
+          "link": [
+            {
+              "type": "Double",
+              "topicGet": "cuktech/(1)/port/c3",
+              "inFunc": "JSON.parse(value).power || 0"
+            }
+          ]
+        },
+        {
+          "type": "C_Volt",
+          "name": "Напряжение",
+          "link": [
+            {
+              "type": "Double",
+              "topicGet": "cuktech/(1)/port/c3",
+              "inFunc": "JSON.parse(value).voltage || 0"
+            }
+          ]
+        },
+        {
+          "type": "C_Ampere",
+          "name": "Ток",
+          "link": [
+            {
+              "type": "Double",
+              "topicGet": "cuktech/(1)/port/c3",
+              "inFunc": "JSON.parse(value).current || 0"
+            }
+          ]
+        },
+        {
+          "type": "C_String",
+          "name": "Протокол",
+          "write": false,
+          "link": [
+            {
+              "type": "String",
+              "topicGet": "cuktech/(1)/port/c3",
+              "inFunc": "JSON.parse(value).active ? (JSON.parse(value).protocol || '—') : 'нет нагрузки'"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "Outlet",
+      "name": "Порт USB-A",
+      "characteristics": [
+        {
+          "type": "On",
+          "link": [
+            {
+              "type": "String",
+              "topicGet": "cuktech/(1)/settings",
+              "topicSet": "cuktech/(1)/port",
+              "inFunc": "((JSON.parse(value)['16'] || 0) >> 3 & 1) == 1 ? 'true' : 'false'",
+              "outFunc": "JSON.stringify({port: 'a', action: value ? 'on' : 'off'})"
+            }
+          ]
+        },
+        {
+          "type": "OutletInUse",
+          "link": [
+            {
+              "type": "String",
+              "topicGet": "cuktech/(1)/port/a",
+              "inFunc": "JSON.parse(value).active ? 'true' : 'false'"
+            }
+          ]
+        },
+        {
+          "type": "C_Watt",
+          "name": "Мощность",
+          "link": [
+            {
+              "type": "Double",
+              "topicGet": "cuktech/(1)/port/a",
+              "inFunc": "JSON.parse(value).power || 0"
+            }
+          ]
+        },
+        {
+          "type": "C_Volt",
+          "name": "Напряжение",
+          "link": [
+            {
+              "type": "Double",
+              "topicGet": "cuktech/(1)/port/a",
+              "inFunc": "JSON.parse(value).voltage || 0"
+            }
+          ]
+        },
+        {
+          "type": "C_Ampere",
+          "name": "Ток",
+          "link": [
+            {
+              "type": "Double",
+              "topicGet": "cuktech/(1)/port/a",
+              "inFunc": "JSON.parse(value).current || 0"
+            }
+          ]
+        },
+        {
+          "type": "C_String",
+          "name": "Протокол",
+          "write": false,
+          "link": [
+            {
+              "type": "String",
+              "topicGet": "cuktech/(1)/port/a",
+              "inFunc": "JSON.parse(value).active ? (JSON.parse(value).protocol || '—') : 'нет нагрузки'"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "C_Option",
+      "name": "Режим зарядки",
+      "characteristics": [
+        {
+          "type": "C_Integer",
+          "name": "Режим (1 AI, 2 Apple, 3 Single, 4 Balance)",
+          "unit": "",
+          "visible": false,
+          "write": false,
+          "minValue": 1,
+          "maxValue": 4,
+          "minStep": 1,
+          "link": [
+            {
+              "type": "Integer",
+              "topicGet": "cuktech/(1)/settings",
+              "topicSet": "cuktech/(1)/set",
+              "inFunc": "JSON.parse(value)['5'] || 1",
+              "outFunc": "JSON.stringify({piid: 5, value: value})"
+            }
+          ]
+        },
+        {
+          "type": "C_String",
+          "name": "Режим",
+          "write": false,
+          "link": [
+            {
+              "type": "String",
+              "topicGet": "cuktech/(1)/settings",
+              "inFunc": "({1:'AI',2:'Apple',3:'Single',4:'Balance'})[JSON.parse(value)['5']] || '—'"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "Switch",
+      "name": "USB-A всегда включён",
+      "characteristics": [
+        {
+          "type": "On",
+          "link": [
+            {
+              "type": "String",
+              "topicGet": "cuktech/(1)/settings",
+              "topicSet": "cuktech/(1)/set",
+              "inFunc": "(JSON.parse(value)['15'] || 0) == 1 ? 'true' : 'false'",
+              "outFunc": "JSON.stringify({piid: 15, value: value ? 1 : 0})"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "Switch",
+      "name": "Гасить экран без нагрузки",
+      "characteristics": [
+        {
+          "type": "On",
+          "link": [
+            {
+              "type": "String",
+              "topicGet": "cuktech/(1)/settings",
+              "topicSet": "cuktech/(1)/set",
+              "inFunc": "(JSON.parse(value)['19'] || 0) == 1 ? 'true' : 'false'",
+              "outFunc": "JSON.stringify({piid: 19, value: value ? 1 : 0})"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "Switch",
+      "name": "Блокировка поворота экрана",
+      "characteristics": [
+        {
+          "type": "On",
+          "link": [
+            {
+              "type": "String",
+              "topicGet": "cuktech/(1)/settings",
+              "topicSet": "cuktech/(1)/set",
+              "inFunc": "(JSON.parse(value)['20'] || 0) == 1 ? 'true' : 'false'",
+              "outFunc": "JSON.stringify({piid: 20, value: value ? 1 : 0})"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "AccessoryInformation",
+      "characteristics": [
+        {
+          "type": "C_Online",
+          "link": [
+            {
+              "type": "String",
+              "topicGet": "cuktech/(1)/status",
+              "inFunc": "(JSON.parse(value).connected && JSON.parse(value).authenticated) ? 'Online' : 'Offline'"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
