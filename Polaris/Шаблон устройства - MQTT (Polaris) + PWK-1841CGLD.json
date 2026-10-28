@@ -1,0 +1,375 @@
+{
+  "name": "Чайник",
+  "manufacturer": "Polaris",
+  "model": "PWK-1841CGLD",
+  "modelIds": [
+    "polaris/([0-9a-f]{12})/state/night"
+  ],
+  "services": [
+    {
+      "type": "Switch",
+      "name": "Кипячение",
+      "characteristics": [
+        {
+          "type": "On",
+          "link": [
+            {
+              "type": "String",
+              "topicGet": "polaris/(1)/state/mode",
+              "topicSet": "polaris/(1)/control/mode",
+              "inFunc": "value != '0'",
+              "outFunc": "value ? '1' : '0'"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "Thermostat",
+      "name": "Нагрев",
+      "characteristics": [
+        {
+          "type": "CurrentHeatingCoolingState",
+          "link": [
+            {
+              "type": "String",
+              "topicGet": "polaris/(1)/state/mode",
+              "inFunc": "value == '0' ? 0 : 1"
+            }
+          ],
+          "validValues": "0,1"
+        },
+        {
+          "type": "TargetHeatingCoolingState",
+          "link": [
+            {
+              "type": "String",
+              "topicGet": "polaris/(1)/state/mode",
+              "topicSet": "polaris/(1)/control/mode",
+              "inFunc": "value == '0' ? 0 : 1",
+              "outFunc": "value == 0 ? '0' : '3'"
+            }
+          ],
+          "validValues": "0,1"
+        },
+        {
+          "type": "CurrentTemperature",
+          "link": [
+            {
+              "type": "Double",
+              "topicGet": "polaris/(1)/state/sensor/temperature"
+            }
+          ]
+        },
+        {
+          "type": "TargetTemperature",
+          "link": [
+            {
+              "type": "Integer",
+              "topicGet": "polaris/(1)/state/temperature",
+              "topicSet": "polaris/(1)/control/temperature",
+              "inFunc": "(Number(value) < 30) ? 100 : Number(value)"
+            }
+          ],
+          "minValue": 30,
+          "maxValue": 100,
+          "minStep": 1
+        }
+      ]
+    },
+    {
+      "type": "Television",
+      "name": "Режим работы",
+      "characteristics": [
+        {
+          "type": "Active",
+          "visible": false,
+          "link": [
+            {
+              "type": "String",
+              "topicGet": "polaris/(1)/state/mode",
+              "topicSet": "polaris/(1)/control/mode",
+              "inFunc": "value == '0' ? 0 : 1",
+              "outFunc": "value == 1 ? '1' : '0'"
+            }
+          ]
+        },
+        {
+          "type": "ActiveIdentifier",
+          "write": true,
+          "description": "1 - Кипячение, 3 - Разогрев, 4 - Разогрев с удержанием, 5 - IQ Кипячение",
+          "link": [
+            {
+              "type": "String",
+              "topicGet": "polaris/(1)/state/mode",
+              "topicSet": "polaris/(1)/control/mode",
+              "inFunc": "({'1':1,'3':3,'4':4,'5':5})[value] || 1",
+              "outFunc": "String(value)"
+            }
+          ]
+        },
+        {
+          "type": "ConfiguredName",
+          "write": false,
+          "name": "Режим работы",
+          "link": [
+            {
+              "type": "String",
+              "topicGet": "polaris/(1)/state/mode",
+              "inFunc": "({'0':'Выключен','1':'Кипячение','3':'Разогрев','4':'Разогрев с удержанием','5':'IQ Кипячение'})[value] || 'Режим работы'"
+            }
+          ]
+        },
+        {
+          "type": "SleepDiscoveryMode",
+          "visible": false,
+          "value": 1
+        }
+      ]
+    },
+    {
+      "type": "InputSource",
+      "name": "Кипячение",
+      "characteristics": [
+        {
+          "type": "Identifier",
+          "value": 1
+        },
+        {
+          "type": "ConfiguredName",
+          "value": "Кипячение"
+        },
+        {
+          "type": "IsConfigured",
+          "value": 1
+        },
+        {
+          "type": "CurrentVisibilityState",
+          "value": 0
+        }
+      ]
+    },
+    {
+      "type": "InputSource",
+      "name": "Разогрев",
+      "characteristics": [
+        {
+          "type": "Identifier",
+          "value": 3
+        },
+        {
+          "type": "ConfiguredName",
+          "value": "Разогрев"
+        },
+        {
+          "type": "IsConfigured",
+          "value": 1
+        },
+        {
+          "type": "CurrentVisibilityState",
+          "value": 0
+        }
+      ]
+    },
+    {
+      "type": "InputSource",
+      "name": "Разогрев с удержанием",
+      "characteristics": [
+        {
+          "type": "Identifier",
+          "value": 4
+        },
+        {
+          "type": "ConfiguredName",
+          "value": "Разогрев с удержанием"
+        },
+        {
+          "type": "IsConfigured",
+          "value": 1
+        },
+        {
+          "type": "CurrentVisibilityState",
+          "value": 0
+        }
+      ]
+    },
+    {
+      "type": "InputSource",
+      "name": "IQ Кипячение",
+      "characteristics": [
+        {
+          "type": "Identifier",
+          "value": 5
+        },
+        {
+          "type": "ConfiguredName",
+          "value": "IQ Кипячение"
+        },
+        {
+          "type": "IsConfigured",
+          "value": 1
+        },
+        {
+          "type": "CurrentVisibilityState",
+          "value": 0
+        }
+      ]
+    },
+    {
+      "type": "Lightbulb",
+      "name": "Ночник",
+      "characteristics": [
+        {
+          "type": "On",
+          "link": [
+            {
+              "type": "String",
+              "topicGet": "polaris/(1)/state/night",
+              "topicSet": "polaris/(1)/control/night",
+              "inFunc": "(value == '1' || value == 'true') ? 'true' : 'false'",
+              "outFunc": "value ? 'true' : 'false'"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "Switch",
+      "name": "@Подсветка",
+      "characteristics": [
+        {
+          "type": "On",
+          "link": [
+            {
+              "type": "String",
+              "topicGet": "polaris/(1)/state/backlight",
+              "topicSet": "polaris/(1)/control/backlight",
+              "map": {
+                "true": "true",
+                "false": "false"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "Switch",
+      "name": "@Звук",
+      "characteristics": [
+        {
+          "type": "On",
+          "link": [
+            {
+              "type": "String",
+              "topicGet": "polaris/(1)/state/sound",
+              "topicSet": "polaris/(1)/control/sound",
+              "map": {
+                "true": "true",
+                "false": "false"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "Switch",
+      "name": "@Блокировка кнопок",
+      "characteristics": [
+        {
+          "type": "On",
+          "link": [
+            {
+              "type": "String",
+              "topicGet": "polaris/(1)/state/child_lock",
+              "topicSet": "polaris/(1)/control/child_lock",
+              "map": {
+                "true": "true",
+                "false": "false"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "ContactSensor",
+      "name": "Чайник на базе",
+      "characteristics": [
+        {
+          "type": "ContactSensorState",
+          "link": [
+            {
+              "type": "String",
+              "topicGet": "polaris/(1)/state/error/empty_base",
+              "inFunc": "(value == 'true' || value == '1') ? 1 : 0"
+            }
+          ]
+        },
+        {
+          "type": "C_String",
+          "name": "Ошибка",
+          "write": false,
+          "link": [
+            {
+              "type": "String",
+              "topicGet": "polaris/(1)/state/error/code",
+              "inFunc": "({'00':'Нет','01':'Мало воды','02':'Чайник снят с базы','03':'Ошибка термодатчика','04':'Ошибка термодатчика','05':'Блокировка кнопок','06':'Рекомендуется сменить воду','07':'Давно не меняли воду'})[value] || value"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "options": [
+    {
+      "link": [
+        {
+          "type": "String",
+          "topicGet": "polaris/(1)/state/firmware"
+        }
+      ],
+      "name": "Прошивка Wi-Fi",
+      "write": false,
+      "inputType": "STATUS",
+      "type": "String"
+    },
+    {
+      "link": [
+        {
+          "type": "String",
+          "topicGet": "polaris/(1)/state/mcu_firmware"
+        }
+      ],
+      "name": "Прошивка MCU",
+      "write": false,
+      "inputType": "STATUS",
+      "type": "String"
+    },
+    {
+      "link": [
+        {
+          "type": "String",
+          "topicGet": "polaris/(1)/state/diag/rssi"
+        }
+      ],
+      "name": "RSSI",
+      "write": false,
+      "inputType": "STATUS",
+      "type": "String"
+    },
+    {
+      "link": [
+        {
+          "type": "String",
+          "topicGet": "polaris/(1)/state/last_wifi"
+        }
+      ],
+      "name": "Wi-Fi сеть",
+      "write": false,
+      "inputType": "STATUS",
+      "type": "String"
+    }
+  ]
+}
