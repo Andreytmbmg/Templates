@@ -38,7 +38,15 @@
         },
         {
           "type": "ConfiguredName",
-          "value": "Саундбар"
+          "write": false,
+          "name": "Режим звука",
+          "link": [
+            {
+              "type": "String",
+              "topicGet": "lgsb/(1)/sound_mode_name",
+              "inFunc": "value || 'Режим звука'"
+            }
+          ]
         },
         {
           "type": "SleepDiscoveryMode",
