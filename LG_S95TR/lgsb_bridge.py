@@ -9,8 +9,9 @@ LG Soundbar (S95TR / S90T) <-> MQTT bridge для SprutHub.
 
 Зависимости:  pip3 install pycryptodome paho-mqtt
 Запуск:
-  python3 lgsb_bridge.py --host 192.168.31.153 --mqtt 127.0.0.1 \
-      [--mqtt-port 1883] [--user U --password P] [--base lgsb/s95tr]
+  python3 lgsb_bridge.py --host <IP_саундбара> --mqtt <IP_брокера> \
+      [--mqtt-port <порт_брокера, по умолчанию 1883>] \
+      [--user <логин> --password <пароль>] [--base lgsb/s95tr]
 """
 
 import argparse

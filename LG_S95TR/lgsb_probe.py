@@ -8,8 +8,8 @@ LG Soundbar probe — разведка локального протокола (
    какие поля изменились (так сопоставим поля с настройками).
 
 Зависимость:  pip3 install pycryptodome
-Запуск:       python3 lgsb_probe.py 192.168.1.50
-              python3 lgsb_probe.py 192.168.1.50 --watch 120
+Запуск:       python3 lgsb_probe.py <IP_саундбара>
+              python3 lgsb_probe.py <IP_саундбара> --watch 120
 """
 
 import argparse
