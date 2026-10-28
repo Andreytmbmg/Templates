@@ -4,13 +4,14 @@ After=bluetooth.target network-online.target
 Wants=network-online.target bluetooth.target
 
 [Service]
-User=homebridge
+# пользователь, под которым установлен мост (владелец /opt/cuktech)
+User=<пользователь>
 WorkingDirectory=/opt/cuktech/server
 Environment=CUKTECH_CONFIG_PATH=/etc/cuktech/config.yaml
 # сброс зависшего BLE-подключения (иначе зарядка не рекламирует себя и мост её не находит)
-ExecStartPre=-+/usr/bin/bluetoothctl disconnect 3C:CD:73:34:65:76
+ExecStartPre=-+/usr/bin/bluetoothctl disconnect <MAC зарядки>
 ExecStart=/opt/cuktech/server/.venv/bin/cuktech-server
-ExecStopPost=-+/usr/bin/bluetoothctl disconnect 3C:CD:73:34:65:76
+ExecStopPost=-+/usr/bin/bluetoothctl disconnect <MAC зарядки>
 Restart=always
 RestartSec=10
 

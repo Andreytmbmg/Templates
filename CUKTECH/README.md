@@ -26,7 +26,7 @@
 
 ## Требования
 
-- SprutHub с MQTT-брокером (в примере `192.168.31.147:44444`)
+- SprutHub с MQTT-брокером: нужны его IP-адрес и порт (смотрите в настройках MQTT-контроллера SprutHub)
 - Linux-хост с Bluetooth LE в радиусе действия зарядки
 - MiOT **TOKEN** зарядки: 24 hex-символа. Нужен именно TOKEN, BLE KEY не подходит
 - Пока работает мост, приложение Mi Home не должно держать BLE-подключение к зарядке: она принимает только одного клиента
@@ -101,13 +101,13 @@ uv run --python 3.12 --with-requirements requirements.txt token_extractor.py
 sudo mkdir -p /etc/cuktech
 sudo tee /etc/cuktech/config.yaml >/dev/null <<'EOF'
 ble:
-  mac: "<MAC зарядки>"
-  token: "<TOKEN>"
+  mac: "<MAC зарядки>"       # формат AA:BB:CC:DD:EE:FF, есть в выводе token_extractor
+  token: "<TOKEN>"           # 24 hex-символа из поля TOKEN (не BLE KEY)
 mqtt:
-  host: "192.168.31.147"     # только IP, без порта
-  port: 44444
-  username: ""
-  password: ""
+  host: "<IP MQTT-брокера>"  # только IP, без порта, например "192.168.1.10"
+  port: <порт брокера>       # число без кавычек, например 1883
+  username: ""               # логин брокера, если нет — оставить ""
+  password: ""               # пароль брокера, если нет — оставить ""
   topic_prefix: "cuktech/charger"
   keepalive: 60
 server:
@@ -138,7 +138,12 @@ CUKTECH_CONFIG_PATH=/etc/cuktech/config.yaml .venv/bin/cuktech-server
 
 ## Шаг 5. Служба systemd
 
-Скопируйте [`cuktech-ble.service`](cuktech-ble.service) в `/etc/systemd/system/`. В строках `bluetoothctl disconnect` укажите MAC своей зарядки, затем:
+Скопируйте [`cuktech-ble.service`](cuktech-ble.service) в `/etc/systemd/system/` и замените в нём:
+
+- `<пользователь>` — пользователь, под которым запускаете мост (тот, кто владеет `/opt/cuktech`; проверить: `whoami`);
+- `<MAC зарядки>` — MAC вашей зарядки в двух строках `bluetoothctl disconnect`.
+
+Затем:
 
 ```bash
 sudo systemctl daemon-reload
