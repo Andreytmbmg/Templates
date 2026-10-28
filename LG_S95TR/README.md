@@ -30,7 +30,7 @@
 
 ## Требования
 
-- SprutHub с MQTT-брокером (в примере `192.168.31.147:44444`)
+- SprutHub с MQTT-брокером: понадобятся его IP и порт
 - Linux-хост в той же сети, что и саундбар (здесь ТВ-приставка RK3318 на Armbian, Debian bullseye), Python 3.9+
 - Саундбар подключён к Wi-Fi через приложение LG Sound Bar
 - Фиксированный IP саундбара (закрепите его в DHCP роутера)
@@ -79,7 +79,7 @@ venv/bin/pip install pycryptodome paho-mqtt
 Пробный запуск:
 
 ```bash
-venv/bin/python lgsb_bridge.py --host <IP_саундбара> --mqtt 192.168.31.147 --mqtt-port 44444 --debug
+venv/bin/python lgsb_bridge.py --host <IP_саундбара> --mqtt <IP_брокера> --mqtt-port <порт_брокера> --debug
 ```
 
 Должны появиться `MQTT подключён`, `Саундбар … подключён` и поток значений (`volume = 5`, `woofer = 6`…). Если брокер требует авторизацию — добавьте `--user` и `--password`.
@@ -88,7 +88,7 @@ venv/bin/python lgsb_bridge.py --host <IP_саундбара> --mqtt 192.168.31.
 
 ## Шаг 4. Служба systemd
 
-Поправьте IP в `lgsb.service` и установите:
+Откройте `lgsb.service` и замените `<IP_саундбара>`, `<IP_брокера>`, `<порт_брокера>` и при необходимости пользователя (`User=`) на свои значения. Затем установите:
 
 ```bash
 sudo cp lgsb.service /etc/systemd/system/

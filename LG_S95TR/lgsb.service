@@ -4,10 +4,15 @@ After=network-online.target
 Wants=network-online.target
 
 [Service]
+# <пользователь>, от имени которого работает мост (например, pi или homebridge)
 User=homebridge
 WorkingDirectory=/opt/lgsb
-# --host  — IP саундбара, --mqtt / --mqtt-port — брокер SprutHub
-ExecStart=/opt/lgsb/venv/bin/python /opt/lgsb/lgsb_bridge.py --host 192.168.31.153 --mqtt 192.168.31.147 --mqtt-port 44444
+# Замените перед установкой:
+#   <IP_саундбара>     — IP саундбара в локальной сети (закрепите его в DHCP роутера)
+#   <IP_брокера>       — IP MQTT-брокера SprutHub
+#   <порт_брокера>     — порт брокера (Настройки → MQTT в SprutHub)
+# Если брокер требует авторизацию, допишите: --user <логин> --password <пароль>
+ExecStart=/opt/lgsb/venv/bin/python /opt/lgsb/lgsb_bridge.py --host <IP_саундбара> --mqtt <IP_брокера> --mqtt-port <порт_брокера>
 Restart=always
 RestartSec=10
 
