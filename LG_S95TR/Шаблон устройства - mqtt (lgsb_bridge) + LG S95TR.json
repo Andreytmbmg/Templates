@@ -1,0 +1,1018 @@
+{
+  "name": "Саундбар",
+  "manufacturer": "LG",
+  "model": "S95TR",
+  "modelIds": [
+    "lgsb/([a-z0-9_]+)"
+  ],
+  "services": [
+    {
+      "name": "Саундбар",
+      "type": "Television",
+      "characteristics": [
+        {
+          "type": "Active",
+          "link": [
+            {
+              "type": "String",
+              "topicGet": "lgsb/(1)/power",
+              "topicSet": "lgsb/(1)/power/set",
+              "map": {
+                "INACTIVE": "off",
+                "ACTIVE": "on"
+              }
+            }
+          ]
+        },
+        {
+          "type": "ActiveIdentifier",
+          "write": true,
+          "description": "19 - AI Sound Pro, 0 - Стандарт, 7 - Кино, 26 - Чёткий голос, 21 - Спорт, 6 - Музыка, 22 - Игра, 14 - Bass Blast, 5 - Пользовательский, 15 - Dolby Atmos, 23 - Синхронизация с телевизором, 24 - IMAX DTS, 25 - IMAX DTS:X",
+          "link": [
+            {
+              "type": "Integer",
+              "topicGet": "lgsb/(1)/sound_mode",
+              "topicSet": "lgsb/(1)/sound_mode/set"
+            }
+          ]
+        },
+        {
+          "type": "ConfiguredName",
+          "value": "Саундбар"
+        },
+        {
+          "type": "SleepDiscoveryMode",
+          "value": 1
+        }
+      ]
+    },
+    {
+      "name": "AI Sound Pro",
+      "type": "InputSource",
+      "characteristics": [
+        {
+          "type": "Identifier",
+          "value": 19
+        },
+        {
+          "type": "ConfiguredName",
+          "value": "AI Sound Pro"
+        },
+        {
+          "type": "IsConfigured",
+          "value": 1
+        },
+        {
+          "type": "CurrentVisibilityState",
+          "value": 0
+        }
+      ]
+    },
+    {
+      "name": "Стандарт",
+      "type": "InputSource",
+      "characteristics": [
+        {
+          "type": "Identifier",
+          "value": 0
+        },
+        {
+          "type": "ConfiguredName",
+          "value": "Стандарт"
+        },
+        {
+          "type": "IsConfigured",
+          "value": 1
+        },
+        {
+          "type": "CurrentVisibilityState",
+          "value": 0
+        }
+      ]
+    },
+    {
+      "name": "Кино",
+      "type": "InputSource",
+      "characteristics": [
+        {
+          "type": "Identifier",
+          "value": 7
+        },
+        {
+          "type": "ConfiguredName",
+          "value": "Кино"
+        },
+        {
+          "type": "IsConfigured",
+          "value": 1
+        },
+        {
+          "type": "CurrentVisibilityState",
+          "value": 0
+        }
+      ]
+    },
+    {
+      "name": "Чёткий голос",
+      "type": "InputSource",
+      "characteristics": [
+        {
+          "type": "Identifier",
+          "value": 26
+        },
+        {
+          "type": "ConfiguredName",
+          "value": "Чёткий голос"
+        },
+        {
+          "type": "IsConfigured",
+          "value": 1
+        },
+        {
+          "type": "CurrentVisibilityState",
+          "value": 0
+        }
+      ]
+    },
+    {
+      "name": "Спорт",
+      "type": "InputSource",
+      "characteristics": [
+        {
+          "type": "Identifier",
+          "value": 21
+        },
+        {
+          "type": "ConfiguredName",
+          "value": "Спорт"
+        },
+        {
+          "type": "IsConfigured",
+          "value": 1
+        },
+        {
+          "type": "CurrentVisibilityState",
+          "value": 0
+        }
+      ]
+    },
+    {
+      "name": "Музыка",
+      "type": "InputSource",
+      "characteristics": [
+        {
+          "type": "Identifier",
+          "value": 6
+        },
+        {
+          "type": "ConfiguredName",
+          "value": "Музыка"
+        },
+        {
+          "type": "IsConfigured",
+          "value": 1
+        },
+        {
+          "type": "CurrentVisibilityState",
+          "value": 0
+        }
+      ]
+    },
+    {
+      "name": "Игра",
+      "type": "InputSource",
+      "characteristics": [
+        {
+          "type": "Identifier",
+          "value": 22
+        },
+        {
+          "type": "ConfiguredName",
+          "value": "Игра"
+        },
+        {
+          "type": "IsConfigured",
+          "value": 1
+        },
+        {
+          "type": "CurrentVisibilityState",
+          "value": 0
+        }
+      ]
+    },
+    {
+      "name": "Bass Blast",
+      "type": "InputSource",
+      "characteristics": [
+        {
+          "type": "Identifier",
+          "value": 14
+        },
+        {
+          "type": "ConfiguredName",
+          "value": "Bass Blast"
+        },
+        {
+          "type": "IsConfigured",
+          "value": 1
+        },
+        {
+          "type": "CurrentVisibilityState",
+          "value": 0
+        }
+      ]
+    },
+    {
+      "name": "Пользовательский",
+      "type": "InputSource",
+      "characteristics": [
+        {
+          "type": "Identifier",
+          "value": 5
+        },
+        {
+          "type": "ConfiguredName",
+          "value": "Пользовательский"
+        },
+        {
+          "type": "IsConfigured",
+          "value": 1
+        },
+        {
+          "type": "CurrentVisibilityState",
+          "value": 0
+        }
+      ]
+    },
+    {
+      "name": "Dolby Atmos",
+      "type": "InputSource",
+      "characteristics": [
+        {
+          "type": "Identifier",
+          "value": 15
+        },
+        {
+          "type": "ConfiguredName",
+          "value": "Dolby Atmos"
+        },
+        {
+          "type": "IsConfigured",
+          "value": 1
+        },
+        {
+          "type": "CurrentVisibilityState",
+          "value": 0
+        }
+      ]
+    },
+    {
+      "name": "Синхронизация с телевизором",
+      "type": "InputSource",
+      "characteristics": [
+        {
+          "type": "Identifier",
+          "value": 23
+        },
+        {
+          "type": "ConfiguredName",
+          "value": "Синхронизация с телевизором"
+        },
+        {
+          "type": "IsConfigured",
+          "value": 1
+        },
+        {
+          "type": "CurrentVisibilityState",
+          "value": 0
+        }
+      ]
+    },
+    {
+      "name": "IMAX DTS",
+      "type": "InputSource",
+      "characteristics": [
+        {
+          "type": "Identifier",
+          "value": 24
+        },
+        {
+          "type": "ConfiguredName",
+          "value": "IMAX DTS"
+        },
+        {
+          "type": "IsConfigured",
+          "value": 1
+        },
+        {
+          "type": "CurrentVisibilityState",
+          "value": 0
+        }
+      ]
+    },
+    {
+      "name": "IMAX DTS:X",
+      "type": "InputSource",
+      "characteristics": [
+        {
+          "type": "Identifier",
+          "value": 25
+        },
+        {
+          "type": "ConfiguredName",
+          "value": "IMAX DTS:X"
+        },
+        {
+          "type": "IsConfigured",
+          "value": 1
+        },
+        {
+          "type": "CurrentVisibilityState",
+          "value": 0
+        }
+      ]
+    },
+    {
+      "name": "Громкость",
+      "type": "Speaker",
+      "characteristics": [
+        {
+          "type": "Mute",
+          "link": [
+            {
+              "type": "String",
+              "topicGet": "lgsb/(1)/mute",
+              "topicSet": "lgsb/(1)/mute/set",
+              "map": {
+                "true": "on",
+                "false": "off"
+              }
+            }
+          ]
+        },
+        {
+          "type": "Volume",
+          "link": [
+            {
+              "type": "Integer",
+              "topicGet": "lgsb/(1)/volume",
+              "topicSet": "lgsb/(1)/volume/set"
+            }
+          ],
+          "minValue": 0,
+          "maxValue": 100,
+          "minStep": 1
+        }
+      ]
+    },
+    {
+      "name": "Вход HDMI eARC",
+      "type": "Switch",
+      "characteristics": [
+        {
+          "type": "On",
+          "link": [
+            {
+              "type": "String",
+              "topicGet": "lgsb/(1)/input",
+              "topicSet": "lgsb/(1)/input/set",
+              "inFunc": "(value == '20')",
+              "outFunc": "'20'"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Вход HDMI",
+      "type": "Switch",
+      "characteristics": [
+        {
+          "type": "On",
+          "link": [
+            {
+              "type": "String",
+              "topicGet": "lgsb/(1)/input",
+              "topicSet": "lgsb/(1)/input/set",
+              "inFunc": "(value == '6')",
+              "outFunc": "value ? '6' : '20'"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Вход Оптика",
+      "type": "Switch",
+      "characteristics": [
+        {
+          "type": "On",
+          "link": [
+            {
+              "type": "String",
+              "topicGet": "lgsb/(1)/input",
+              "topicSet": "lgsb/(1)/input/set",
+              "inFunc": "(value == '15' || value == '4')",
+              "outFunc": "value ? '15' : '20'"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Вход Bluetooth",
+      "type": "Switch",
+      "characteristics": [
+        {
+          "type": "On",
+          "link": [
+            {
+              "type": "String",
+              "topicGet": "lgsb/(1)/input",
+              "topicSet": "lgsb/(1)/input/set",
+              "inFunc": "(value == '1')",
+              "outFunc": "value ? '1' : '20'"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Вход Wi-Fi",
+      "type": "Switch",
+      "characteristics": [
+        {
+          "type": "On",
+          "link": [
+            {
+              "type": "String",
+              "topicGet": "lgsb/(1)/input",
+              "topicSet": "lgsb/(1)/input/set",
+              "inFunc": "(value == '0')",
+              "outFunc": "value ? '0' : '20'"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Вход USB",
+      "type": "Switch",
+      "characteristics": [
+        {
+          "type": "On",
+          "link": [
+            {
+              "type": "String",
+              "topicGet": "lgsb/(1)/input",
+              "topicSet": "lgsb/(1)/input/set",
+              "inFunc": "(value == '18' || value == '19')",
+              "outFunc": "value ? '19' : '20'"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Dynamic Range Control (DRC)",
+      "type": "Switch",
+      "characteristics": [
+        {
+          "type": "On",
+          "description": "Поддерживает аудиосигнал в формате Dolby Digital, заглушая громкие звуки и усиливая тихие.",
+          "link": [
+            {
+              "type": "String",
+              "topicGet": "lgsb/(1)/drc",
+              "topicSet": "lgsb/(1)/drc/set",
+              "map": {
+                "true": "on",
+                "false": "off"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Neural X",
+      "type": "Switch",
+      "characteristics": [
+        {
+          "type": "On",
+          "description": "Поддерживает аудиосигнал в формате Digital Theater System (DTS), автоматически выбирая оптимальный канал для контента.",
+          "link": [
+            {
+              "type": "String",
+              "topicGet": "lgsb/(1)/neuralx",
+              "topicSet": "lgsb/(1)/neuralx/set",
+              "map": {
+                "true": "on",
+                "false": "off"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Автоматический уровень громкости",
+      "type": "Switch",
+      "characteristics": [
+        {
+          "type": "On",
+          "description": "Предотвращает внезапные громкие звуки.",
+          "link": [
+            {
+              "type": "String",
+              "topicGet": "lgsb/(1)/auto_vol",
+              "topicSet": "lgsb/(1)/auto_vol/set",
+              "map": {
+                "true": "on",
+                "false": "off"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Ночной режим",
+      "type": "Switch",
+      "characteristics": [
+        {
+          "type": "On",
+          "description": "Приглушает звук в ночные часы.",
+          "link": [
+            {
+              "type": "String",
+              "topicGet": "lgsb/(1)/night",
+              "topicSet": "lgsb/(1)/night/set",
+              "map": {
+                "true": "on",
+                "false": "off"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Настройки объемного звука",
+      "type": "Switch",
+      "characteristics": [
+        {
+          "type": "On",
+          "description": "Звук выводится через все подключенные динамики.",
+          "link": [
+            {
+              "type": "String",
+              "topicGet": "lgsb/(1)/rear_on",
+              "topicSet": "lgsb/(1)/rear_on/set",
+              "map": {
+                "true": "on",
+                "false": "off"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Автовключение",
+      "type": "Switch",
+      "characteristics": [
+        {
+          "type": "On",
+          "description": "Саундбар автоматически включается и выключается при включении телевизора. Эта функция работает только при покдлючении саундбара к телевизору через оптический кабель или Bluetooth. Возможность покдлючения через оптический кабель зависит от модели саундбара.",
+          "link": [
+            {
+              "type": "String",
+              "topicGet": "lgsb/(1)/auto_power",
+              "topicSet": "lgsb/(1)/auto_power/set",
+              "map": {
+                "true": "on",
+                "false": "off"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Голосовое сопровождение",
+      "type": "Switch",
+      "characteristics": [
+        {
+          "type": "On",
+          "description": "Устройство будет сообщать об изменениях через голосового помощника во время работы.",
+          "link": [
+            {
+              "type": "String",
+              "topicGet": "lgsb/(1)/voice",
+              "topicSet": "lgsb/(1)/voice/set",
+              "map": {
+                "true": "on",
+                "false": "off"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "C_Option",
+      "name": "Верхние частоты",
+      "characteristics": [
+        {
+          "type": "Volume",
+          "unit": "dB",
+          "link": [
+            {
+              "type": "Integer",
+              "topicGet": "lgsb/(1)/treble",
+              "topicSet": "lgsb/(1)/treble/set"
+            }
+          ],
+          "minValue": -6,
+          "maxValue": 6,
+          "minStep": 1
+        }
+      ]
+    },
+    {
+      "type": "C_Option",
+      "name": "Средние частоты",
+      "characteristics": [
+        {
+          "type": "Volume",
+          "unit": "dB",
+          "link": [
+            {
+              "type": "Integer",
+              "topicGet": "lgsb/(1)/middle",
+              "topicSet": "lgsb/(1)/middle/set"
+            }
+          ],
+          "minValue": -6,
+          "maxValue": 6,
+          "minStep": 1
+        }
+      ]
+    },
+    {
+      "type": "C_Option",
+      "name": "Нижние частоты",
+      "characteristics": [
+        {
+          "type": "Volume",
+          "unit": "dB",
+          "link": [
+            {
+              "type": "Integer",
+              "topicGet": "lgsb/(1)/bass",
+              "topicSet": "lgsb/(1)/bass/set"
+            }
+          ],
+          "minValue": -6,
+          "maxValue": 6,
+          "minStep": 1
+        }
+      ]
+    },
+    {
+      "type": "C_Option",
+      "name": "Уровень сабвуфера",
+      "characteristics": [
+        {
+          "type": "Volume",
+          "unit": "dB",
+          "link": [
+            {
+              "type": "Integer",
+              "topicGet": "lgsb/(1)/woofer",
+              "topicSet": "lgsb/(1)/woofer/set"
+            }
+          ],
+          "minValue": -15,
+          "maxValue": 6,
+          "minStep": 1
+        }
+      ]
+    },
+    {
+      "type": "C_Option",
+      "name": "Громкость центрального динамика",
+      "characteristics": [
+        {
+          "type": "Volume",
+          "unit": "dB",
+          "link": [
+            {
+              "type": "Integer",
+              "topicGet": "lgsb/(1)/center",
+              "topicSet": "lgsb/(1)/center/set"
+            }
+          ],
+          "minValue": -6,
+          "maxValue": 6,
+          "minStep": 1
+        }
+      ]
+    },
+    {
+      "type": "C_Option",
+      "name": "Громкость динамика, направленного вверх",
+      "characteristics": [
+        {
+          "type": "Volume",
+          "unit": "dB",
+          "link": [
+            {
+              "type": "Integer",
+              "topicGet": "lgsb/(1)/top",
+              "topicSet": "lgsb/(1)/top/set"
+            }
+          ],
+          "minValue": -6,
+          "maxValue": 6,
+          "minStep": 1
+        }
+      ]
+    },
+    {
+      "type": "C_Option",
+      "name": "Громкость бокового динамика",
+      "characteristics": [
+        {
+          "type": "Volume",
+          "unit": "dB",
+          "link": [
+            {
+              "type": "Integer",
+              "topicGet": "lgsb/(1)/side",
+              "topicSet": "lgsb/(1)/side/set"
+            }
+          ],
+          "minValue": -6,
+          "maxValue": 6,
+          "minStep": 1
+        }
+      ]
+    },
+    {
+      "type": "C_Option",
+      "name": "Громкость заднего динамика",
+      "characteristics": [
+        {
+          "type": "Volume",
+          "unit": "dB",
+          "link": [
+            {
+              "type": "Integer",
+              "topicGet": "lgsb/(1)/rear",
+              "topicSet": "lgsb/(1)/rear/set"
+            }
+          ],
+          "minValue": -6,
+          "maxValue": 6,
+          "minStep": 1
+        }
+      ]
+    },
+    {
+      "type": "C_Option",
+      "name": "Громкость заднего верхнего динамика",
+      "characteristics": [
+        {
+          "type": "Volume",
+          "unit": "dB",
+          "link": [
+            {
+              "type": "Integer",
+              "topicGet": "lgsb/(1)/rear_top",
+              "topicSet": "lgsb/(1)/rear_top/set"
+            }
+          ],
+          "minValue": -6,
+          "maxValue": 6,
+          "minStep": 1
+        }
+      ]
+    },
+    {
+      "type": "C_Option",
+      "name": "Громкость динамика на задней стороне",
+      "characteristics": [
+        {
+          "type": "Volume",
+          "unit": "dB",
+          "link": [
+            {
+              "type": "Integer",
+              "topicGet": "lgsb/(1)/rear_side",
+              "topicSet": "lgsb/(1)/rear_side/set"
+            }
+          ],
+          "minValue": -6,
+          "maxValue": 6,
+          "minStep": 1
+        }
+      ]
+    },
+    {
+      "type": "C_Option",
+      "name": "Dialog Control",
+      "characteristics": [
+        {
+          "type": "Volume",
+          "name": "Dialog Control",
+          "unit": "",
+          "value": 0,
+          "description": "Чем выше настройка, тем тише звучат голоса при фоновом шуме. Доступно, когда поддерживается аудиоформатом DTS:X.",
+          "link": [
+            {
+              "type": "Integer",
+              "topicGet": "lgsb/(1)/dialog",
+              "topicSet": "lgsb/(1)/dialog/set"
+            }
+          ],
+          "minValue": 0,
+          "maxValue": 6,
+          "minStep": 1
+        }
+      ]
+    },
+    {
+      "type": "C_Option",
+      "name": "AV Sync",
+      "characteristics": [
+        {
+          "type": "Volume",
+          "name": "Синхронизации AV Sync",
+          "unit": "ms",
+          "value": 0,
+          "description": "Когда звук и видео рассинхронизированы, немного задерживается звук для синхронизации с видеорядом.",
+          "link": [
+            {
+              "type": "Integer",
+              "topicGet": "lgsb/(1)/av_sync",
+              "topicSet": "lgsb/(1)/av_sync/set"
+            }
+          ],
+          "minValue": 0,
+          "maxValue": 300,
+          "minStep": 10
+        }
+      ]
+    },
+    {
+      "type": "C_Option",
+      "name": "Вход",
+      "characteristics": [
+        {
+          "type": "C_String",
+          "visible": false,
+          "write": false,
+          "link": [
+            {
+              "type": "String",
+              "topicGet": "lgsb/(1)/input_name"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "C_Option",
+      "name": "Источник звука",
+      "characteristics": [
+        {
+          "type": "C_String",
+          "visible": false,
+          "write": false,
+          "link": [
+            {
+              "type": "String",
+              "topicGet": "lgsb/(1)/audio_source"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "C_Option",
+      "name": "Режим звука",
+      "characteristics": [
+        {
+          "type": "C_String",
+          "visible": false,
+          "write": false,
+          "link": [
+            {
+              "type": "String",
+              "topicGet": "lgsb/(1)/sound_mode_name"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "options": [
+    {
+      "link": [
+        {
+          "type": "Integer",
+          "topicGet": "lgsb/(1)/backlight",
+          "topicSet": "lgsb/(1)/backlight/set"
+        }
+      ],
+      "type": "Integer",
+      "name": "Светодиодный индикатор/дисплей",
+      "values": [
+        {
+          "name": "Авто яркость",
+          "value": 0
+        },
+        {
+          "name": "Авто выкл.",
+          "value": 1
+        },
+        {
+          "name": "Всегда вкл.",
+          "value": 2
+        }
+      ],
+      "description": "Авто выкл.: Информация отображается только при включении устройства или при изменение состояния, а затем выключается через несколько секунд. Авто яркость.: Загорается при включении устройства или при изменение состояния, а затем тускнеет через несколько секунд."
+    },
+    {
+      "link": [
+        {
+          "type": "String",
+          "topicGet": "lgsb/(1)/available"
+        }
+      ],
+      "type": "String",
+      "write": false,
+      "name": "Связь моста",
+      "inputType": "STATUS"
+    },
+    {
+      "link": [
+        {
+          "type": "String",
+          "topicGet": "lgsb/(1)/model"
+        }
+      ],
+      "type": "String",
+      "write": false,
+      "name": "Модель",
+      "inputType": "STATUS"
+    },
+    {
+      "link": [
+        {
+          "type": "String",
+          "topicGet": "lgsb/(1)/firmware"
+        }
+      ],
+      "type": "String",
+      "write": false,
+      "name": "Прошивка Main / Micom",
+      "inputType": "STATUS"
+    },
+    {
+      "link": [
+        {
+          "type": "String",
+          "topicGet": "lgsb/(1)/dialog_enabled"
+        }
+      ],
+      "type": "String",
+      "write": false,
+      "name": "Dialog Control доступен",
+      "inputType": "STATUS"
+    },
+    {
+      "type": "String",
+      "name": "Входы",
+      "write": false,
+      "inputType": "STATUS",
+      "value": "Переключатели «Вход …»: включение выбирает вход, выключение возвращает на HDMI eARC."
+    },
+    {
+      "type": "String",
+      "name": "Звуковые режимы",
+      "write": false,
+      "inputType": "STATUS",
+      "value": "Выбираются как источники ТВ «Саундбар». Названия можно переименовать в приложении Дом."
+    },
+    {
+      "type": "String",
+      "name": "Dialog Control",
+      "write": false,
+      "inputType": "STATUS",
+      "value": "Работает только с источником в формате DTS:X."
+    }
+  ]
+}
