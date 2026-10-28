@@ -16,6 +16,7 @@
 | 🧹 **Roborock Saros 10R** — робот-пылесос (сервис «Пылесос») | MQTT (служба `roborock_svc` на python-roborock) | [Шаблон устройства - mqtt (roborock_svc) + Roborock Saros 10R.json](Roborock/%D0%A8%D0%B0%D0%B1%D0%BB%D0%BE%D0%BD%20%D1%83%D1%81%D1%82%D1%80%D0%BE%D0%B9%D1%81%D1%82%D0%B2%D0%B0%20-%20mqtt%20%28roborock_svc%29%20%2B%20Roborock%20Saros%2010R.json) | [README](Roborock/README.md) |
 | 🔌 **CUKTECH 10 GaN Charger Ultra (AD1204)** — зарядка 4 порта | MQTT (BLE-мост `cuktech-ble-server-lite`) | [Шаблон устройства - mqtt (cuktech-ble-server) + CUKTECH 10 GaN Ultra.json](CUKTECH/%D0%A8%D0%B0%D0%B1%D0%BB%D0%BE%D0%BD%20%D1%83%D1%81%D1%82%D1%80%D0%BE%D0%B9%D1%81%D1%82%D0%B2%D0%B0%20-%20mqtt%20%28cuktech-ble-server%29%20%2B%20CUKTECH%2010%20GaN%20Ultra.json) | [README](CUKTECH/README.md) |
 | 🔊 **LG S95TR** — саундбар 9.1.5 | MQTT (мост `lgsb_bridge` по локальному протоколу LG) | [Шаблон устройства - mqtt (lgsb_bridge) + LG S95TR.json](LG_S95TR/%D0%A8%D0%B0%D0%B1%D0%BB%D0%BE%D0%BD%20%D1%83%D1%81%D1%82%D1%80%D0%BE%D0%B9%D1%81%D1%82%D0%B2%D0%B0%20-%20mqtt%20%28lgsb_bridge%29%20%2B%20LG%20S95TR.json) | [README](LG_S95TR/README.md) |
+| 🫖 **Polaris PWK 1841CGLD** — чайник IQ Home | MQTT (локальный MQTT из приложения Polaris → Mosquitto) | [Шаблон устройства - MQTT (Polaris) + PWK-1841CGLD.json](Polaris/%D0%A8%D0%B0%D0%B1%D0%BB%D0%BE%D0%BD%20%D1%83%D1%81%D1%82%D1%80%D0%BE%D0%B9%D1%81%D1%82%D0%B2%D0%B0%20-%20MQTT%20%28Polaris%29%20%2B%20PWK-1841CGLD.json) | [README](Polaris/README.md) |
 
 ## 🔗 Шаблоны в репозитории [logic](https://github.com/Andreytmbmg/logic)
 
@@ -44,6 +45,8 @@
 **CUKTECH 10 GaN Charger Ultra.** Четыре порта (C1, C2, C3, USB-A) как розетки: включение и выключение порта, «используется», мощность, напряжение, ток и протокол зарядки (PD, PPS, QC…). Плюс текущий режим зарядки, «USB-A всегда включён», гашение и блокировка поворота экрана. Данные идут локально по Bluetooth, без облака Xiaomi: мост на Linux-хосте (здесь — ТВ-приставка RK3318) подключается к зарядке и публикует их в MQTT.
 
 **LG S95TR.** Питание, громкость и mute, звуковые режимы как источники ТВ, выбор входа, тон (ВЧ/СЧ/НЧ), уровни сабвуфера и всех динамиков, DRC, Neural:X, ночной режим, автогромкость, AV Sync, Dialog Control, голосовое сопровождение и индикатор. Работает локально, без облака LG: мост на Linux-хосте общается с саундбаром по протоколу приложения LG Sound Bar (TCP 9741) и публикует данные в MQTT.
+
+**Polaris PWK 1841CGLD.** Кипячение, термостат с текущей и целевой температурой (30–100 °C), режимы (кипячение, разогрев, разогрев с удержанием, IQ кипячение) через Television / InputSource, ночник, подсветка, звук, блокировка кнопок, датчик «чайник на базе» и текст ошибки. Работает локально, без облака Polaris: чайник сам подключается к MQTT по настройке из приложения. Встроенный брокер SprutHub с чайником несовместим, поэтому нужен отдельный Mosquitto.
 
 **VAKIO Base Smart.** Включение, скорость вентилятора и выбор режима работы: приток, приток MAX, рекуперация лето/зима, вытяжка, вытяжка MAX, ночной. Режимы реализованы через сервис Television / InputSource, поэтому в Apple Home выбираются из списка.
 
