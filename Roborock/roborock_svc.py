@@ -3,21 +3,67 @@
 
 Работает от системного пользователя roborock, ключ входа берётся из
 /opt/roborock/.roborock (создан командой `roborock login`). Пароль не хранится.
+
+Настройки: /opt/roborock/roborock_svc.conf (INI). Переменные окружения RR_*
+имеют приоритет над файлом — systemd-юнит работает как раньше.
+Логи: stdout (journald) + /opt/roborock/roborock_svc.log.
+Журнал событий «что, куда и почему поехало»: /opt/roborock/events.log,
+HTTP GET /events, retained-топик <base>/event.
 """
-import asyncio, json, logging, os, signal, time
+import asyncio, configparser, json, logging, logging.handlers, os, signal, time
+from collections import deque
 
 from aiohttp import web
 import aiomqtt
 from roborock.cli import RoborockContext
 
-DUID = os.environ.get("RR_DUID", "")
-HTTP_PORT = int(os.environ.get("RR_HTTP_PORT", "8590"))
-MQTT_HOST = os.environ.get("RR_MQTT_HOST", "127.0.0.1")
-MQTT_PORT = int(os.environ.get("RR_MQTT_PORT", "1883"))
-BASE = os.environ.get("RR_TOPIC", "roborock/saros10r")
+VERSION = "1.2.1"   # HTTP API: GET/POST /conf, POST /restart
+
+CONF_PATH = os.environ.get("RR_CONF", "/opt/roborock/roborock_svc.conf")
+
+DEFAULTS = {
+    "roborock": {"duid": "ВАШ_DUID", "http_port": "8590"},   # duid — узнать: `roborock login`
+    "mqtt": {"host": "192.168.1.10", "port": "1883", "topic": "roborock/saros10r"},   # брокер Спрут.Хаб
+    "poll": {"status_moving_s": "5", "map_moving_s": "1", "map_idle_s": "600"},
+    "start": {"settle_s": "0.5", "select_ttl_s": "120"},
+    "log": {"dir": "/opt/roborock", "max_mb": "2", "backups": "3", "events_max": "200"},
+}
+ENV = {"roborock.duid": "RR_DUID", "roborock.http_port": "RR_HTTP_PORT",
+       "mqtt.host": "RR_MQTT_HOST", "mqtt.port": "RR_MQTT_PORT", "mqtt.topic": "RR_TOPIC"}
+
+def load_config():
+    """INI-файл + дефолты; переменные окружения RR_* — поверх всего."""
+    cp = configparser.ConfigParser()
+    cp.read(CONF_PATH)
+    cfg = {}
+    for sec, opts in DEFAULTS.items():
+        for k, d in opts.items():
+            key = f"{sec}.{k}"
+            v = os.environ.get(ENV[key]) if key in ENV else None
+            if v is None and cp.has_option(sec, k):
+                v = cp.get(sec, k)
+            cfg[key] = v if v is not None else d
+    cfg["roborock.http_port"] = int(cfg["roborock.http_port"])
+    cfg["mqtt.port"] = int(cfg["mqtt.port"])
+    for k in ("poll.status_moving_s", "poll.map_moving_s", "poll.map_idle_s",
+              "start.settle_s", "start.select_ttl_s"):
+        cfg[k] = float(cfg[k])
+    for k in ("log.max_mb", "log.backups", "log.events_max"):
+        cfg[k] = int(cfg[k])
+    return cfg
+
+CFG = load_config()
+DUID = CFG["roborock.duid"]
+HTTP_PORT = CFG["roborock.http_port"]
+MQTT_HOST = CFG["mqtt.host"]
+MQTT_PORT = CFG["mqtt.port"]
+BASE = CFG["mqtt.topic"]
 PATH_MAX = 4000
+LOG_FILE = os.path.join(CFG["log.dir"], "roborock_svc.log")
+EVENTS_FILE = os.path.join(CFG["log.dir"], "events.log")
 
 log = logging.getLogger("roborock_svc")
+ev_log = logging.getLogger("roborock_svc.events")   # журнал событий в events.log
 
 STATE_RU = {
     1: "Запуск", 2: "Отключён от зарядки", 3: "Ожидание", 5: "Уборка", 6: "Возвращается на базу",
@@ -32,8 +78,19 @@ BUSY = MOVING | {10, 22, 23}
 CUSTOM_MOTOR = [{"fan_power": 106, "water_box_mode": 204, "mop_mode": 302}]  # «по настройкам комнат»
 JOB = {"task": None, "text": ""}
 
+EVENTS = deque(maxlen=CFG["log.events_max"])   # журнал событий: что, куда и почему поехало
+
+def event(text, source=""):
+    """Событие в журнал: память (HTTP /events) + events.log + retained-топик <base>/event."""
+    e = {"ts": time.time(), "time": time.strftime("%H:%M:%S"), "text": text, "source": source}
+    EVENTS.append(e)
+    ev_log.info("%s%s | %s", e["time"], (" (" + source + ")") if source else "", text)
+    S["event"] = e["time"] + " " + text + ((" (" + source + ")") if source else "")
+    EV.set()
+
 S = {"online": False, "ts": 0, "status": {}, "state": None, "text": "", "cleaning": False,
-     "pos": None, "charger": None, "path": [], "room": "", "rooms": {}, "error": None}
+     "pos": None, "charger": None, "path": [], "room": "", "rooms": {}, "error": None, "boxes": {},
+     "event": ""}
 # --- Sprut.hub C_VacuumCleaner -------------------------------------------------
 # C_CurrentOperationalState: 0 STOPPED 1 RUNNING 2 PAUSED 3 ERROR 64 SEEKING_CHARGER
 # 65 CHARGING 66 DOCKED 67 EMPTYING_DUST_BIN 68 CLEANING_MOP 69 FILLING_WATER_TANK 70 UPDATING_MAPS
@@ -47,7 +104,36 @@ SH_ERR = {1: 78, 2: 65, 3: 65, 4: 78, 5: 77, 6: 77, 7: 76, 8: 65, 9: 66, 12: 72,
 SH_DOCK_ERR = {34: 2, 38: 68, 39: 74, 42: 77, 44: 75, 46: 66, 53: 74}
 SH_FAN = {105: 0, 101: 1, 102: 2, 103: 3, 104: 4, 108: 5}
 SH_FAN_W = {0: 105, 1: 101, 2: 102, 3: 103, 4: 104, 5: 108}
-SH = {"selected": [], "fan": None, "water": None, "mode": None}   # выбор из Sprut.hub до старта
+SH = {"selected": [], "selected_ts": 0.0, "fan": None, "water": None, "mode": None}   # выбор из Sprut.hub до старта
+
+# --- атомарный старт -----------------------------------------------------------
+# RUNNING приходит в одном топике, selected_areas/fan/water/mode — в других:
+# порядка между топиками MQTT не гарантирует, поэтому стартуем не сразу,
+# а через короткое окно, собрав все параметры в одну команду.
+START_SETTLE_S = CFG["start.settle_s"]     # окно сборки параметров перед стартом
+SELECT_TTL_S = CFG["start.select_ttl_s"]   # выбор комнат живёт N секунд, потом считается «залипшим»
+_start_task = None
+
+def schedule_start():
+    """Запланировать старт уборки с задержкой-сборкой параметров."""
+    global _start_task
+    if _start_task and not _start_task.done():
+        _start_task.cancel()
+    _start_task = asyncio.create_task(_delayed_start())
+
+def cancel_start():
+    global _start_task
+    if _start_task and not _start_task.done():
+        _start_task.cancel()
+    _start_task = None
+
+async def _delayed_start():
+    try:
+        await asyncio.sleep(START_SETTLE_S)
+        for c in sh_start():
+            await CMDQ.put(c)
+    except asyncio.CancelledError:
+        pass
 
 
 def sh_values(o):
@@ -104,9 +190,14 @@ def parse_areas(p):
     return [i for i in dict.fromkeys(ids) if str(i) in S["rooms"]]
 
 
-def sh_start():
+def sh_start(source="Sprut.hub"):
     """Команда RUNNING из Sprut.hub: продолжить паузу, иначе убрать выбранные комнаты/всё."""
-    if S["state"] == 10 and not SH["selected"]:
+    fresh = time.time() - SH["selected_ts"] < SELECT_TTL_S
+    selected = list(SH["selected"]) if fresh else []
+    if not fresh and SH["selected"]:
+        log.warning("выбор комнат устарел (> %d с) — игнорируем: %s", SELECT_TTL_S, SH["selected"])
+    if S["state"] == 10 and not selected:
+        event("Продолжение уборки после паузы", source)
         return [("app_start", None)]
     g = None
     if SH["fan"] is not None or SH["water"] is not None or SH["mode"] is not None:
@@ -118,23 +209,18 @@ def sh_start():
              "rt": 301 if mode == 0 else 300, "r": 1}
         if wl == 0 and mode not in (1,):
             g["m"] = "vac"
-    segs = list(SH["selected"]) or [int(k) for k in S["rooms"]]
-    SH.update(selected=[], fan=None, water=None, mode=None)   # выбор действует на одну уборку
+    segs = selected or [int(k) for k in S["rooms"]]
+    names = ", ".join(S["rooms"].get(str(x), str(x)) for x in segs)
+    log.info("старт уборки: %s", names)
+    if g:
+        event(f"Старт уборки: {names} (мощность {SH['fan']}, вода {SH['water']}, режим {SH['mode']})", source)
+    else:
+        event(f"Старт уборки: {names}", source)
+    SH.update(selected=[], selected_ts=0.0, fan=None, water=None, mode=None)   # выбор действует на одну уборку
     if g is None and len(segs) == len(S["rooms"]) and segs:
         return [("app_start", None)]
     start_job([dict(g or {"m": "app"}, segments=segs)])
     return []
-
-
-def sh_target(p):
-    try:
-        v = int(float(p))
-    except Exception:
-        return []
-    if v == 1:
-        return sh_start()
-    cancel_job()
-    return {0: [("app_stop", None)], 2: [("app_pause", None)], 3: [("app_charge", None)]}.get(v, [])
 
 
 EV = asyncio.Event()           # «есть новое» для MQTT
@@ -180,6 +266,52 @@ def room_at(md, x, y):
     return ""
 
 
+def room_boxes(md, pts):
+    """Прямоугольники комнат робота в миллиметрах робота: {сегмент: {"name", "box": [x0, y0, x1, y1]}}.
+
+    Разбор карты отдаёт их то в миллиметрах, то в пикселях картинки (ось Y бывает перевёрнута) —
+    пробуем все варианты и берём тот, в который попадает больше точек маршрута.
+    Нужны дашборду для автоматического совмещения карты пылесоса с планом квартиры.
+    """
+    rooms = getattr(md, "rooms", None) or {}
+    if not rooms:
+        return S.get("boxes") or {}
+    conv = [lambda x, y: (x, y)]
+    try:
+        cal = md.calibration() or []
+        if len(cal) >= 3:
+            (a, b, c) = cal[:3]
+            vx0, vy0 = a["vacuum"]["x"], a["vacuum"]["y"]
+            mx0, my0 = a["map"]["x"], a["map"]["y"]
+            sx = (b["map"]["x"] - mx0) / ((b["vacuum"]["x"] - vx0) or 1) or 1
+            sy = (c["map"]["y"] - my0) / ((c["vacuum"]["y"] - vy0) or 1) or 1
+            conv.append(lambda x, y: (vx0 + (x - mx0) / sx, vy0 + (y - my0) / sy))
+            h = getattr(getattr(md, "image", None), "dimensions", None)
+            if h is not None and getattr(h, "height", None):
+                hh = h.height
+                conv.append(lambda x, y: (vx0 + (x - mx0) / sx, vy0 + ((hh - y) - my0) / sy))
+    except Exception:
+        pass
+    sample = pts[::max(1, len(pts) // 400)]
+    for k in ("pos", "charger"):
+        if S.get(k) and S[k].get("x") is not None:
+            sample.append([S[k]["x"], S[k]["y"]])
+    best, score = None, -1
+    for f in conv:
+        bx = {}
+        for num, r in rooms.items():
+            try:
+                x0, y0 = f(r.x0, r.y0)
+                x1, y1 = f(r.x1, r.y1)
+            except Exception:
+                continue
+            bx[str(num)] = [min(x0, x1), min(y0, y1), max(x0, x1), max(y0, y1)]
+        sc = sum(1 for p in sample if any(q[0] <= p[0] <= q[2] and q[1] <= p[1] <= q[3] for q in bx.values()))
+        if sc > score:
+            best, score = bx, sc
+    return {k: {"name": S["rooms"].get(k) or "", "box": [round(v) for v in q]} for k, q in (best or {}).items()}
+
+
 class Robot:
     def __init__(self):
         self.ctx = None
@@ -201,6 +333,7 @@ class Robot:
             log.warning("комнаты не получены: %s", e)
         S["online"] = True
         log.info("подключено к %s, комнат: %d", DUID, len(S["rooms"]))
+        event(f"Подключено к роботу, комнат: {len(S['rooms'])}")
 
     async def close(self):
         try:
@@ -212,7 +345,9 @@ class Robot:
 
     async def status(self):
         st = self.v1.status
+        t0 = time.time()
         await st.refresh()
+        S["stMs"] = int((time.time() - t0) * 1000)
         d = st.as_dict()
         code = d.get("state")
         S.update(status=d, state=code, text=STATE_RU.get(code, f"Состояние {code}"),
@@ -221,7 +356,10 @@ class Robot:
 
     async def map(self):
         mc = self.v1.map_content
+        t0 = time.time()
         await mc.refresh()
+        S["mapMs"] = int((time.time() - t0) * 1000)
+        S["mapTs"] = time.time()
         md = mc.map_data
         if not md:
             return
@@ -237,6 +375,10 @@ class Robot:
             for seg in (md.path.as_dict().get("path") or []):
                 pts.extend([q["x"], q["y"]] for q in seg)
         S["path"] = pts[-PATH_MAX:]
+        try:
+            S["boxes"] = room_boxes(md, pts)
+        except Exception as e:
+            log.warning("комнаты карты: %s", e)
         S["ts"] = time.time()
 
     async def cmd(self, c):
@@ -281,6 +423,7 @@ async def robot_loop():
     rb = Robot()
     fails = 0
     last_map = 0.0
+    last_st = 0.0
     while True:
         try:
             if rb.v1 is None:
@@ -291,17 +434,22 @@ async def robot_loop():
                 log.info("команда %s", c[0])
                 await rb.cmd(c)
                 last_map = 0
-            code = await rb.status()
-            moving = code in MOVING
+                last_st = 0
             now = time.monotonic()
-            if now - last_map > (2 if moving else 600):
+            # во время движения карта (позиция и маршрут) читается без пауз, статус — реже
+            if not (S["state"] in MOVING and now - last_st < CFG["poll.status_moving_s"]):
+                await rb.status()
+                last_st = time.monotonic()
+            moving = S["state"] in MOVING
+            now = time.monotonic()
+            if now - last_map > (CFG["poll.map_moving_s"] if moving else CFG["poll.map_idle_s"]):
                 await rb.map()
-                last_map = now
+                last_map = time.monotonic()
             S["error"] = None
             EV.set()
-            # во время уборки — каждые 3 с, на базе — раз в 30 с (или сразу по команде)
+            # во время уборки — почти без пауз, на базе — раз в 20 с (или сразу по команде)
             try:
-                await asyncio.wait_for(_cmd_wait(), timeout=1.5 if moving else 20)
+                await asyncio.wait_for(_cmd_wait(), timeout=0.3 if moving else 20)
             except asyncio.TimeoutError:
                 pass
         except asyncio.CancelledError:
@@ -309,6 +457,8 @@ async def robot_loop():
         except Exception as e:
             fails += 1
             S["error"] = str(e)[:200]
+            if fails == 1:
+                event("Потеряна связь с роботом: " + S["error"])
             S["online"] = False
             EV.set()
             log.warning("ошибка (%d): %s", fails, e)
@@ -360,7 +510,12 @@ async def run_job(groups):
                 changed = False
             await CMDQ.put(("app_segment_clean", [{"segments": segs, "repeat": max(1, min(3, int(g.get("r") or 1)))}]))
             log.info("задание %s: %s %s", JOB["text"], mp or "как в приложении", g.get("r") or 1)
+            event(f"Задание {JOB['text']}: {names} — {mp and 'свои настройки' or 'как в приложении'}, проходов {g.get('r') or 1}")
             if i == len(groups) - 1:
+                # последняя часть: тоже дожидаемся окончания, чтобы сброс мотор-режима
+                # (finally ниже) ушёл в очередь ПОСЛЕ уборки, а не сразу после старта
+                await _wait_state(lambda s: s in BUSY, 90)
+                await _wait_state(lambda s: s not in BUSY, 4 * 3600)
                 break
             # ждём, пока робот начнёт и закончит эту часть
             await _wait_state(lambda s: s in BUSY, 90)
@@ -374,12 +529,9 @@ async def run_job(groups):
                     if time.monotonic() - ok_since > 15:
                         break
                 await asyncio.sleep(2)
-        if changed:
-            # последняя часть: дождаться окончания и вернуть «по настройкам комнат»
-            await _wait_state(lambda s: s in BUSY, 90)
-            await _wait_state(lambda s: s not in BUSY, 4 * 3600)
     except asyncio.CancelledError:
         log.info("задание отменено")
+        event("Задание отменено")
         raise
     finally:
         if changed:
@@ -414,8 +566,11 @@ def snapshot(full=True):
         "cleanArea": round((st.get("cleanArea") or 0) / 1e6, 1), "cleanTime": round((st.get("cleanTime") or 0) / 60),
         "errorCode": st.get("errorCode"), "dockError": st.get("dockErrorStatus"),
         "cleanPercent": st.get("cleanPercent"), "pos": S["pos"], "charger": S["charger"],
-        "rooms": S["rooms"], "error": S["error"], "job": JOB["text"],
+        "rooms": S["rooms"], "roomBoxes": S["boxes"], "error": S["error"], "job": JOB["text"],
+        "event": S["event"],
         "fan": st.get("fanPower"), "water": st.get("waterBoxMode"), "route": st.get("mopMode"),
+        # замеры для дашборда: когда и как долго читалась карта/статус робота
+        "now": time.time(), "mapTs": S.get("mapTs"), "mapMs": S.get("mapMs"), "stMs": S.get("stMs"),
     }
     if full:
         o["path"] = S["path"]
@@ -436,12 +591,20 @@ async def h_state(req):
     return web.json_response(o, headers=CORS)
 
 
+async def h_events(req):
+    return web.json_response({"events": list(EVENTS)}, headers=CORS)
+
+
 async def h_cmd(req):
     try:
         body = await req.json()
     except Exception:
         body = {}
     if body.get("cmd") == "rooms_cfg" and isinstance(body.get("groups"), list):
+        names = []
+        for g in body["groups"]:
+            names.append("+".join(S["rooms"].get(str(x), str(x)) for x in g.get("segments") or []) or "?")
+        event("Уборка по группам: " + ", ".join(names), "HTTP")
         start_job(body["groups"])
         return web.json_response({"ok": True}, headers=CORS)
     c = to_cmd(body.get("cmd"), body.get("rooms"))
@@ -449,6 +612,7 @@ async def h_cmd(req):
         cancel_job()
     if not c:
         return web.json_response({"ok": False, "error": "неизвестная команда"}, status=400, headers=CORS)
+    event("Команда " + c[0], "HTTP")
     await CMDQ.put(c)
     return web.json_response({"ok": True}, headers=CORS)
 
@@ -457,9 +621,95 @@ async def h_opt(req):
     return web.Response(headers=CORS)
 
 
+# --- настройки через HTTP (панель HomeBridge) -----------------------------------
+# Служба работает от пользователя roborock и владеет CONF_PATH — писать может сама,
+# sudo не нужен. Перезапуск: os._exit(0) + Restart=always в systemd-юните.
+
+CONF_META = {   # ключ: (тип, горячее применение без перезапуска)
+    "roborock.duid": (str, False),
+    "roborock.http_port": (int, False),
+    "mqtt.host": (str, False),
+    "mqtt.port": (int, False),
+    "mqtt.topic": (str, False),
+    "poll.status_moving_s": (float, True),
+    "poll.map_moving_s": (float, True),
+    "poll.map_idle_s": (float, True),
+    "start.settle_s": (float, True),
+    "start.select_ttl_s": (float, True),
+    "log.dir": (str, False),
+    "log.max_mb": (int, False),
+    "log.backups": (int, False),
+    "log.events_max": (int, False),
+}
+
+def conf_sections():
+    out = {}
+    for key, v in CFG.items():
+        sec, _, k = key.partition(".")
+        out.setdefault(sec, {})[k] = v
+    return out
+
+def write_conf():
+    cp = configparser.ConfigParser()
+    for sec in ("roborock", "mqtt", "poll", "start", "log"):
+        cp.add_section(sec)
+        for key, v in CFG.items():
+            s, _, k = key.partition(".")
+            if s == sec:
+                cp.set(sec, k, str(v))
+    tmp = CONF_PATH + ".tmp"
+    with open(tmp, "w", encoding="utf-8") as f:
+        f.write("# roborock_svc — файл обслуживается панелью HomeBridge. "
+                "Переменные окружения RR_* имеют приоритет.\n")
+        cp.write(f)
+    os.replace(tmp, CONF_PATH)
+
+async def h_conf(req):
+    return web.json_response({"ok": True, "conf": conf_sections()}, headers=CORS)
+
+async def h_conf_save(req):
+    try:
+        body = await req.json()
+    except Exception:
+        return web.json_response({"ok": False, "error": "ожидался JSON"}, status=400, headers=CORS)
+    hot, restart = [], False
+    for sec, opts in (body.get("conf") or {}).items():
+        for k, v in (opts or {}).items():
+            key = f"{sec}.{k}"
+            meta = CONF_META.get(key)
+            if not meta:
+                continue
+            typ, is_hot = meta
+            try:
+                v = typ(v)
+            except Exception:
+                return web.json_response({"ok": False, "error": f"некорректное значение: {key}"},
+                                         status=400, headers=CORS)
+            if CFG.get(key) != v:
+                CFG[key] = v
+                if is_hot:
+                    hot.append(key)
+                else:
+                    restart = True
+    write_conf()
+    log.info("настройки сохранены в %s (горячих: %d, нужен перезапуск: %s)",
+             CONF_PATH, len(hot), restart)
+    event("Настройки службы сохранены" + (", требуется перезапуск" if restart else ""), "HTTP")
+    return web.json_response({"ok": True, "applied": hot, "restart_required": restart}, headers=CORS)
+
+async def h_restart(req):
+    event("Перезапуск службы (запрос из панели)", "HTTP")
+    asyncio.get_running_loop().call_later(0.5, os._exit, 0)   # Restart=always поднимет службу заново
+    return web.json_response({"ok": True}, headers=CORS)
+
+
 async def http_server():
     app = web.Application()
     app.router.add_get("/state", h_state)
+    app.router.add_get("/events", h_events)
+    app.router.add_get("/conf", h_conf)
+    app.router.add_post("/conf", h_conf_save)
+    app.router.add_post("/restart", h_restart)
     app.router.add_post("/cmd", h_cmd)
     app.router.add_route("OPTIONS", "/{tail:.*}", h_opt)
     runner = web.AppRunner(app, access_log=None)
@@ -499,6 +749,7 @@ async def mqtt_loop():
                             "clean_time": str(o["cleanTime"]), "error": str(o["errorCode"] or 0),
                             "dock_error": str(o["dockError"] or 0),
                             "position": json.dumps(o["pos"]) if o["pos"] else "",
+                            "event": o.get("event") or "",
                         }
                         vals.update(sh_values(o))
                         for k, v in vals.items():
@@ -515,10 +766,43 @@ async def mqtt_loop():
                         p = m.payload.decode("utf-8", "replace") if isinstance(m.payload, (bytes, bytearray)) else str(m.payload)
                         c = None
                         if t.endswith("/set/target_state"):
-                            for c2 in sh_target(p):
+                            try:
+                                v = int(float(p))
+                            except Exception:
+                                v = None
+                            if v == 1:
+                                schedule_start()      # старт через окно сборки — атомарно
+                            else:
+                                cancel_start()
+                                cancel_job()
+                                for c2 in {0: [("app_stop", None)], 2: [("app_pause", None)], 3: [("app_charge", None)]}.get(v, []):
+                                    event("Команда " + c2[0], "Sprut.hub")
+                                    await CMDQ.put(c2)
+                        elif t.endswith("/set/rooms_start"):
+                            # атомарный старт одним сообщением: {"rooms": "Кухня", "fan": 3, "water": 3, "mode": 3}
+                            try:
+                                o = json.loads(p)
+                            except Exception:
+                                o = {"rooms": p}
+                            if isinstance(o, str):
+                                o = {"rooms": o}
+                            SH["selected"] = parse_areas(o.get("rooms"))
+                            SH["selected_ts"] = time.time()
+                            for k in ("fan", "water", "mode"):
+                                if o.get(k) is not None:
+                                    try:
+                                        SH[k] = int(o[k])
+                                    except Exception:
+                                        pass
+                            for c2 in sh_start("Sprut.hub (rooms_start)"):
                                 await CMDQ.put(c2)
                         elif t.endswith("/set/selected_areas"):
-                            SH["selected"] = parse_areas(p)
+                            ids = parse_areas(p)
+                            if str(p or "").strip() and not ids:
+                                log.warning("комнаты не распознаны: %r (известны: %s)",
+                                            p, ", ".join(S["rooms"].values()) or "—")
+                            SH["selected"] = ids
+                            SH["selected_ts"] = time.time()
                         elif t.endswith(("/set/suction", "/set/water", "/set/clean_mode")):
                             key = {"suction": "fan", "water": "water", "clean_mode": "mode"}[t.rsplit("/", 1)[1]]
                             try:
@@ -527,8 +811,12 @@ async def mqtt_loop():
                                 pass
                         elif t.endswith("/set/command"):
                             c = to_cmd(p)
+                            if c:
+                                event("Команда " + c[0], "Sprut.hub")
                         elif t.endswith("/set/clean_rooms"):
                             c = to_cmd("rooms", p)
+                            if c:
+                                event("Уборка комнат: " + str(p), "Sprut.hub")
                         EV.set()
                         if c and c[0] in ("app_charge", "app_stop"):
                             cancel_job()
@@ -546,6 +834,18 @@ async def mqtt_loop():
 async def main():
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
     logging.getLogger("roborock").setLevel(logging.WARNING)
+    fmt = logging.Formatter("%(asctime)s %(levelname)s %(message)s")
+    fh = logging.handlers.RotatingFileHandler(LOG_FILE, maxBytes=CFG["log.max_mb"] * 1024 * 1024,
+                                              backupCount=CFG["log.backups"], encoding="utf-8")
+    fh.setFormatter(fmt)
+    log.addHandler(fh)
+    efh = logging.handlers.RotatingFileHandler(EVENTS_FILE, maxBytes=CFG["log.max_mb"] * 1024 * 1024,
+                                               backupCount=CFG["log.backups"], encoding="utf-8")
+    efh.setFormatter(logging.Formatter("%(message)s"))
+    ev_log.addHandler(efh)
+    ev_log.setLevel(logging.INFO)
+    ev_log.propagate = False
+    log.info("roborock_svc v%s", VERSION)
     await http_server()
     tasks = [asyncio.create_task(robot_loop()), asyncio.create_task(mqtt_loop())]
     stop = asyncio.Event()
@@ -555,6 +855,10 @@ async def main():
     await stop.wait()
     for t in tasks:
         t.cancel()
+    # библиотека Roborock может держать соединения; не ждём 90 с, пока systemd убьёт процесс
+    await asyncio.wait(tasks, timeout=5)
+    logging.shutdown()
+    os._exit(0)
 
 
 if __name__ == "__main__":

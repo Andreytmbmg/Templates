@@ -189,6 +189,23 @@
     },
     {
       "type": "C_Option",
+      "name": "Событие",
+      "characteristics": [
+        {
+          "type": "C_String",
+          "link": [
+            {
+              "type": "String",
+              "topicGet": "roborock/(1)/event"
+            }
+          ],
+          "name": "Событие",
+          "write": false
+        }
+      ]
+    },
+    {
+      "type": "C_Option",
       "name": "Убрано, м²",
       "characteristics": [
         {
