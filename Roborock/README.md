@@ -1,7 +1,5 @@
 # Roborock Saros 10R шаблон для SprutHub через MQTT
 
-> **Авторы:** разработка службы `roborock_svc` (v1.1–v1.2: атомарный старт, настройки из INI, журнал событий) и панели **HomeBridge** `homebridge-roborock-panel` — при участии **Kimi (Moonshot AI)**. Идеи, сценарии и тестирование — **Andrey (Andreytmbmg)**.
-
 Шаблон устройства **Roborock Saros 10R** для **SprutHub** на родном сервисе **«Пылесос» (C_VacuumCleaner)**.
 
 Своей интеграции Roborock в SprutHub нет, поэтому данные берёт небольшая служба `roborock_svc.py` на базе библиотеки [python-roborock](https://github.com/Python-roborock/python-roborock). Она работает на любой Linux-машине в локальной сети (например, на приставке с Homebridge), читает состояние робота и карту и публикует всё в MQTT-брокер. Команды из SprutHub служба отправляет роботу.
